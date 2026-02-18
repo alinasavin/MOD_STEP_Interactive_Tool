@@ -1,0 +1,83 @@
+{
+  "id": "te-user-1",
+  "layout": "hybrid",
+  "layoutOptions": {
+    "columnGap": 300,
+    "rowGap": 150,
+    "paddingX": 100,
+    "paddingY": 100,
+    "canvasHeight": 750,
+    "overviewGap": 350
+  },
+  "entryNodeId": "user-entry",
+  "instruction": "HOVER ON EACH NODE TO LEARN MORE",
+  "activationMode": "reachable",
+  "overviewNodes": [
+    {
+      "id": "integration-services",
+      "description": "Integration Services",
+      "accentColor": "purple",
+      "role": "overview"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "user-entry",
+      "label": "REQUIREMENT",
+      "description": "T&E USER",
+      "iconKey": "user",
+      "role": "entry",
+      "accentColor": "pink"
+    },
+    {
+      "id": "user-support-services",
+      "label": "User Support Services",
+      "description": "Market Place",
+      "iconKey": "guidance",
+      "role": "step",
+      "accentColor": "emerald",
+      "tooltipDescription": "Additional Information"
+    },
+    {
+      "id": "te-services",
+      "label": "T&E SERVICES",
+      "description": "Enabling Services",
+      "iconKey": "services",
+      "role": "step",
+      "accentColor": "blue",
+      "tooltipDescription": "Additional Information"
+    },
+    {
+      "id": "test",
+      "label": "TEST",
+      "description": "Test T&E Data Services",
+      "iconKey": "portfolio",
+      "role": "step",
+      "accentColor": "emerald",
+      "tooltipDescription": "Additional Information"
+    },
+    {
+      "id": "user-feedback",
+      "label": "FEEDBACK",
+      "description": "User Feedback",
+      "iconKey": "check",
+      "role": "end",
+      "accentColor": "emerald",
+      "tooltipDescription": "Additional Information"
+    }
+  ],
+  "edges": [
+    { "from": "user-entry", "to": "user-support-services", "style": "dotted",
+      "color": "pink"
+    },
+    { "from": "user-support-services", "to": "te-services", "style": "dotted" },
+    { "from": "te-services", "to": "test", "style": "dotted" },
+    { "from": "test", "to": "user-feedback", "style": "dotted" },
+    {
+      "from": "user-feedback",
+      "to": "integration-services",
+      "style": "dashed",
+      "color": "emerald"
+    }
+  ]
+}

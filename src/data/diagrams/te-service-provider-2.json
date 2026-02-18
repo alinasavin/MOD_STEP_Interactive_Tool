@@ -1,0 +1,121 @@
+{
+  "id": "te-service-provider-2",
+  "layout": "hybrid",
+  "layoutOptions": {
+    "columnGap": 320,
+    "rowGap": 250,
+    "paddingX": 100,
+    "paddingY": 200,
+    "canvasHeight": 850,
+    "overviewGap": 250
+  },
+  "entryNodeId": "user-entry",
+  "instruction": "HOVER ON EACH NODE TO LEARN MORE",
+  "activationMode": "reachable",
+  "overviewNodes": [
+    {
+      "id": "integration-services",
+      "description": "Integration Services",
+      "accentColor": "purple",
+      "role": "overview"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "user-entry",
+      "label": "REQUIREMENT",
+      "description": "T&E SERVICE PROVIDER",
+      "iconKey": "user",
+      "role": "entry",
+      "accentColor": "blue"
+    },
+    {
+      "id": "user-support-services",
+      "label": "User Support Services",
+      "description": "T&Cc Sign-up",
+      "iconKey": "guidance",
+      "role": "step",
+      "accentColor": "pink",
+      "steps": [
+        {
+          "id": "market-place",
+          "description": "Market Place",
+          "accentColor": "pink"
+        }
+      ]
+    },
+    {
+      "id": "te-services",
+      "label": "T&E SERVICES",
+      "iconKey": "services",
+      "role": "step",
+      "accentColor": "blue",
+      "steps": [
+        {
+          "id": "service-capability",
+          "description": "Service Capability Approved",
+          "accentColor": "blue"
+        },
+        {
+          "id": "service-provider",
+          "description": "Service Provider Approved",
+          "accentColor": "blue"
+        }
+      ]
+    },
+    {
+      "id": "enabling-services",
+      "label": "T&E SERVICE",
+      "iconKey": "services",
+      "role": "step",
+      "accentColor": "blue",
+      "steps": [
+        {
+          "id": "enabling-service",
+          "description": "Enabling Services",
+          "accentColor": "orange"
+        }
+      ]
+    },
+    {
+      "id": "gap-enabling-services",
+      "label": "T&E SERVICE",
+      "iconKey": "services",
+      "role": "step",
+      "accentColor": "blue",
+      "steps": [
+        {
+          "id": "enabling-service",
+          "label": "Enabling Service",
+          "description": "Gap in Enabling Service",
+          "accentColor": "pink"
+        }
+      ]
+    },
+    {
+      "id": "innovation-services",
+      "label": "Innovation Services",
+      "iconKey": "portfolio",
+      "role": "step",
+      "accentColor": "purple"
+    },
+    {
+      "id": "proposal-offer",
+      "label": "Provider Proposals",
+      "description": "Provider proposals offered to T&E Demand",
+      "iconKey": "portfolio",
+      "role": "step",
+      "accentColor": "purple"
+    }
+  ],
+  "edges": [
+    { "from": "user-entry", "to": "user-support-services", "style": "dashed"},
+    { "from": "user-support-services", "to": "te-services", "style": "dotted" },
+    { "from": "te-services", "to": "enabling-services", "style": "dotted" },
+    { "from": "te-services", "to": "gap-enabling-services", "style": "dotted" },
+    { "from": "enabling-services", "to": "proposal-offer", "style": "dotted",
+      "color": "emerald"
+    },
+    { "from": "gap-enabling-services", "to": "innovation-services", "style": "dotted"}
+  ]
+}

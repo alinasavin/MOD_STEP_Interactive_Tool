@@ -1,0 +1,8 @@
+{
+  "name": "DRAG STEP",
+  "description": "A strategic platform for T&E lifecycle management, connecting users, providers, and R&D through the STEP Process framework.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}

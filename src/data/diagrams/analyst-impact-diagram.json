@@ -1,0 +1,40 @@
+{
+  "id": "analyst-impact-diagram",
+  "layout": "linear",
+  "layoutOptions": {
+    "columnGap": 400,
+    "rowGap": 120,
+    "paddingX": 100,
+    "paddingY": 100
+  },
+  "entryNodeId": "e1",
+  "nodes": [
+    {
+      "id": "e1",
+      "label": "Entry",
+      "description": "Click me",
+      "iconKey": "user",
+      "role": "entry"
+    },
+    {
+      "id": "e2",
+      "label": "Step 2",
+      "description": "Next",
+      "iconKey": "analyst",
+      "role": "step"
+    },
+    {
+      "id": "e3",
+      "label": "End",
+      "description": "Done",
+      "iconKey": "check",
+      "role": "end"
+    }
+  ],
+  "edges": [
+    { "from": "e1", "to": "e2" },
+    { "from": "e2", "to": "e3" }
+  ],
+  "instruction": "Click the entry node to begin.",
+  "activationMode": "all"
+}

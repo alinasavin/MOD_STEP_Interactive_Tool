@@ -1,0 +1,82 @@
+{
+  "id": "te-service-provider-1",
+  "layout": "hybrid",
+  "layoutOptions": {
+    "columnGap": 320,
+    "rowGap": 150,
+    "paddingX": 100,
+    "paddingY": 100,
+    "canvasHeight": 600
+  },
+  "entryNodeId": "user-entry",
+  "instruction": "HOVER ON EACH NODE TO LEARN MORE",
+  "activationMode": "reachable",
+  "nodes": [
+    {
+      "id": "user-entry",
+      "label": "REQUIREMENT",
+      "description": "T&E SERVICE PROVIDER",
+      "iconKey": "user",
+      "role": "entry",
+      "accentColor": "blue"
+    },
+    {
+      "id": "user-support-services",
+      "label": "User Support Services",
+      "description": "Sign-up and provide docs",
+      "iconKey": "guidance",
+      "role": "step",
+      "accentColor": "pink",
+      "steps": [
+        {
+          "id": "market-place",
+          "description": "Market Place",
+          "accentColor": "pink"
+        }
+      ]
+    },
+    {
+      "id": "validate",
+      "label": "Integration Services",
+      "description": "Validate Application",
+      "iconKey": "services",
+      "role": "step",
+      "accentColor": "emerald"
+    },
+    {
+      "id": "te-services",
+      "label": "T&E SERVICES",
+      "iconKey": "services",
+      "role": "step",
+      "accentColor": "blue",
+      "steps": [
+        {
+          "id": "service-capability",
+          "description": "Service Capability Approved",
+          "accentColor": "blue"
+        },
+        {
+          "id": "service-provider",
+          "description": "Service Provider Approved",
+          "accentColor": "blue"
+        }
+      ]
+    },
+    {
+      "id": "proposal-offer",
+      "label": "Provider Proposals",
+      "description": "Provider proposals offered to T&E Demand",
+      "iconKey": "portfolio",
+      "role": "step",
+      "accentColor": "purple"
+    }
+  ],
+  "edges": [
+    { "from": "user-entry", "to": "user-support-services", "style": "dashed"},
+    { "from": "user-support-services", "to": "validate", "style": "dotted" },
+    { "from": "validate", "to": "te-services", "style": "dotted" },
+    { "from": "te-services", "to": "proposal-offer", "style": "dotted",
+      "color": "emerald"
+    }
+  ]
+}

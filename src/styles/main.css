@@ -1,0 +1,47 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: "Inter", sans-serif;
+
+  --color-accent-pink: #f472b6;
+  --color-accent-emerald: #34d399;
+  --color-accent-blue: #60a5fa;
+  --color-accent-orange: #fb923c;
+  --color-accent-purple: #c084fc;
+  --color-neutral-800: #27272a;
+}
+
+:root {
+  --accent-color: var(--color-accent-pink);
+  --accent-glow: rgba(244, 114, 182, 0.2);
+  --accent-bg: rgba(244, 114, 182, 0.05);
+}
+
+.accent-pink { --accent-color: var(--color-accent-pink); --accent-glow: rgba(244, 114, 182, 0.2); --accent-bg: rgba(244, 114, 182, 0.05); }
+.accent-emerald { --accent-color: var(--color-accent-emerald); --accent-glow: rgba(52, 211, 153, 0.2); --accent-bg: rgba(52, 211, 153, 0.05); }
+.accent-blue { --accent-color: var(--color-accent-blue); --accent-glow: rgba(96, 165, 250, 0.2); --accent-bg: rgba(96, 165, 250, 0.05); }
+.accent-orange { --accent-color: var(--color-accent-orange); --accent-glow: rgba(251, 146, 60, 0.2); --accent-bg: rgba(251, 146, 60, 0.05); }
+.accent-purple { --accent-color: var(--color-accent-purple); --accent-glow: rgba(192, 132, 252, 0.2); --accent-bg: rgba(192, 132, 252, 0.05); }
+
+body {
+  margin: 0;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Custom scrollbar handling */
+.dark ::-webkit-scrollbar-track { background: #18181b; }
+.dark ::-webkit-scrollbar-thumb { background: #3f3f46; }
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: #f4f4f5; }
+::-webkit-scrollbar-thumb { background: #d4d4d8; border-radius: 4px; }
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(34, 197, 94, 0.4); }
+  50% { box-shadow: 0 0 35px rgba(34, 197, 94, 0.8); }
+}
+
+.animate-ready {
+  animation: pulse-glow 2.5s infinite ease-in-out;
+}

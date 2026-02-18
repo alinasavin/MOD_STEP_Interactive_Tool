@@ -1,0 +1,106 @@
+{
+  "id": "te-user-2",
+  "layout": "hybrid",
+  "layoutOptions": {
+    "columnGap": 300,
+    "rowGap": 150,
+    "paddingX": 100,
+    "paddingY": 100,
+    "canvasHeight": 800,
+    "overviewGap": 300
+  },
+  "entryNodeId": "user-entry",
+  "instruction": "HOVER ON EACH NODE TO LEARN MORE",
+  "activationMode": "reachable",
+  "overviewNodes": [
+    {
+      "id": "integration-services",
+      "description": "Integration Services",
+      "accentColor": "purple",
+      "role": "overview"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "user-entry",
+      "label": "REQUIREMENT",
+      "description": "T&E USER",
+      "iconKey": "user",
+      "role": "entry",
+      "accentColor": "pink"
+    },
+    {
+      "id": "user-support-services",
+      "label": "User Support Services",
+      "iconKey": "guidance",
+      "role": "step",
+      "accentColor": "pink",
+      "tooltipDescription": "Additional Information",
+      "steps": [
+        {
+          "id": "market-place",
+          "description": "Market Place",
+          "accentColor": "pink"
+        },
+        {
+          "id": "knowledge-hub",
+          "description": "Knowledge Hub",
+          "accentColor": "pink"
+        },
+        {
+          "id": "sqep",
+          "description": "Integration Service SQEP",
+          "accentColor": "purple"
+        }
+      ]
+    },
+    {
+      "id": "test-plan",
+      "label": "User Support Services",
+      "description": "Test Plan",
+      "iconKey": "services",
+      "role": "step",
+      "accentColor": "blue",
+      "tooltipDescription": "Additional Information"
+    },
+    {
+      "id": "te-services",
+      "label": "T&E SERVICES",
+      "iconKey": "services",
+      "role": "step",
+      "accentColor": "blue",
+      "tooltipDescription": "Additional Information",
+      "steps": [
+        {
+          "id": "enabling-services",
+          "description": "Enabling Services",
+          "accentColor": "orange"
+        },
+        {
+          "id": "international",
+          "description": "International",
+          "accentColor": "blue"
+        }
+      ]
+    },
+    {
+      "id": "test",
+      "label": "TEST",
+      "description": "Test T&E Services",
+      "iconKey": "portfolio",
+      "role": "step",
+      "accentColor": "emerald",
+      "tooltipDescription": "Additional Information"
+    }
+  ],
+  "edges": [
+    { "from": "user-entry", "to": "user-support-services", "style": "dashed",
+      "color": "pink"
+    },
+    { "from": "user-support-services", "to": "test-plan", "style": "dotted" },
+    { "from": "test-plan", "to": "te-services", "style": "dotted" },
+    { "from": "te-services", "to": "test", "style": "dotted",
+      "color": "emerald"
+    }
+  ]
+}

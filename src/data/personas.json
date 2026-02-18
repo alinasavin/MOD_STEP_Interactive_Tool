@@ -1,0 +1,77 @@
+[
+  {
+    "id": "te-user",
+    "title": "T&E User",
+    "description": "I want to test a capability.",
+    "longDescription": "Access User Support Services to define your testing requirements, browse the T&E Portfolio for existing solutions, and utilise Common Enablers to accelerate your project.",
+    "ctaLabel": "Select Profile",
+    "iconKey": "user",
+    "colorClass": "text-pink-500",
+    "scenarios": [
+      {
+        "id": "te-user-1",
+        "label": "T&E User",
+        "diagramId": "te-user-1",
+        "description": "I want to be able to quickly look for availability and book a test. This user knows exactly what test they requires. The point of this use case is to show a faster journey from needing a test to completing a test."
+      },
+      {
+        "id": "te-user-2",
+        "label": "T&E User",
+        "diagramId": "te-user-2",
+        "description": "I know what I need to test. I don’t know what the best solution is or how to perform the test."
+      },
+      {
+        "id": "te-user-3",
+        "label": "T&E User",
+        "diagramId": "te-user-3",
+        "description": "I need to conduct a complex SoS test, how do I do this?"
+      }
+    ]
+  },
+  {
+    "id": "te-service-provider",
+    "title": "T&E Service Provider",
+    "description": "I want to offer tests to the market.",
+    "longDescription": "Join the T&E Services marketplace. Standardise your offerings, connect with users through User Support Services, and contribute to the overall T&E Portfolio.",
+    "ctaLabel": "Select Profile",
+    "iconKey": "provider",
+    "colorClass": "text-blue-500",
+    "scenarios": [
+      {
+        "id": "te-service-provider-1",
+        "label": "T&E Service Provider",
+        "diagramId": "te-service-provider-1",
+        "description": "I want to be able to advertise my services to the widest audience."
+      },
+      {
+        "id": "te-service-provider-2",
+        "label": "T&E Service Provider",
+        "diagramId": "te-service-provider-2",
+        "description": "A complex test demand from User Support Services = To fully meet the complex demand I need access to other digital enablers in order to provide the best test service."
+      }
+    ]
+  },
+  {
+    "id": "management-services",
+    "title": "Management Services",
+    "description": "Manage the T&E service portfolio.",
+    "longDescription": "Analyse data from User Support Services to identify capability gaps, direct research investments, and manage the overall health of the T&E service portfolio to evolve the STEP Process.",
+    "ctaLabel": "Select Profile",
+    "iconKey": "analyst",
+    "colorClass": "text-purple-500",
+    "scenarios": [
+      {
+        "id": "management-services-1",
+        "label": "Management Services",
+        "diagramId": "management-services-1",
+        "description": "I need to understand demand, consumption and utilisation of T&E Services ensure central investment continues to provide VfM"
+      },
+      {
+        "id": "management-services-2",
+        "label": "Management Services",
+        "diagramId": "management-services-2",
+        "description": "I need to address a growing gap in capability testing."
+      }
+    ]
+  }
+]

@@ -1,0 +1,23 @@
+{
+  "id": "analyst-roadmap-diagram",
+  "layout": "linear",
+  "layoutOptions": {
+    "columnGap": 250,
+    "rowGap": 120,
+    "paddingX": 100,
+    "paddingY": 100
+  },
+  "entryNodeId": "e1",
+  "nodes": [
+    {
+      "id": "e1",
+      "label": "Entry",
+      "description": "Click me",
+      "iconKey": "user",
+      "role": "entry"
+    }
+  ],
+  "edges": [],
+  "instruction": "Click the entry node to begin.",
+  "activationMode": "all"
+}

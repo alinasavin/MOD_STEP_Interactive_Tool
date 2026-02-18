@@ -1,0 +1,72 @@
+{
+  "id": "management-services-1",
+  "layout": "hybrid",
+  "layoutOptions": {
+    "columnGap": 320,
+    "rowGap": 150,
+    "paddingX": 100,
+    "paddingY": 100,
+    "canvasHeight": 600
+  },
+  "entryNodeId": "user-entry",
+  "instruction": "HOVER ON EACH NODE TO LEARN MORE",
+  "activationMode": "reachable",
+  "nodes": [
+    {
+      "id": "user-entry",
+      "label": "REQUIREMENT",
+      "description": "Management Services",
+      "iconKey": "user",
+      "role": "entry",
+      "accentColor": "emerald",
+      "steps": [
+        {
+          "id": "analyze",
+          "description": "Analyze",
+          "accentColor": "emerald"
+        },
+        {
+          "id": "enabling-services",
+          "description": "Enabling Services",
+          "accentColor": "orange"
+        },
+        {
+          "id": "te-services",
+          "description": "T&E Services",
+          "accentColor": "blue"
+        },
+        {
+          "id": "support-services",
+          "description": "User Support Services",
+          "accentColor": "pink"
+        }
+      ]
+    },
+    {
+      "id": "investment-pot",
+      "label": "Investment Pot",
+      "iconKey": "guidance",
+      "role": "step",
+      "accentColor": "purple"
+    },
+    {
+      "id": "te-services",
+      "label": "T&E SERVICE",
+      "iconKey": "services",
+      "role": "step",
+      "accentColor": "blue"
+    },
+    {
+      "id": "innovation-services",
+      "label": "Innovation Services",
+      "iconKey": "services",
+      "role": "step",
+      "accentColor": "purple"
+    }
+  ],
+  "edges": [
+    { "from": "user-entry", "to": "investment-pot", "style": "dashed"},
+    { "from": "investment-pot", "to": "te-services", "style": "dotted" },
+    { "from": "investment-pot", "to": "innovation-services", "style": "dotted" }
+  ]
+}
