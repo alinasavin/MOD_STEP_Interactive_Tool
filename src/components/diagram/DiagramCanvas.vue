@@ -84,7 +84,6 @@ const scaleFactor = computed(() => {
   return Math.max(0.65, availableW / contentW);
 });
 
-// --- AUTO-FOLLOW PANNING ---
 // --- AUTO-FOLLOW PANNING (Cinematic Camera) ---
 watch(() => props.activeNodeIds, (newIds) => {
   if (newIds.size === 0 || !scrollBodyRef.value) return;
@@ -97,12 +96,22 @@ watch(() => props.activeNodeIds, (newIds) => {
       const scrollContainer = scrollBodyRef.value;
       if (!scrollContainer) return;
 
-      // Calculate center taking scaling into account
+      // 1. Calculate Horizontal Target (Centered)
       const scaledX = pos.x * scaleFactor.value;
       const targetX = scaledX - (containerWidth.value / 2);
 
+      // 2. Calculate Vertical Target (Centered)
+      // We use the same math for Y: (Node position * zoom) - (Half of container height)
+      const scaledY = pos.y * scaleFactor.value;
+
+      // We use containerRef's clientHeight to know how tall the black box is
+      const viewportHeight = containerRef.value?.clientHeight || 500;
+      const targetY = scaledY - (viewportHeight / 2);
+
+      // 3. Perform the 2D Scroll
       scrollContainer.scrollTo({
         left: targetX,
+        top: targetY, // Added vertical panning
         behavior: 'smooth'
       });
     });
