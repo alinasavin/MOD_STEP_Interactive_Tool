@@ -1,0 +1,26 @@
+{
+  "management": {
+    "title": "Management Services",
+    "content": "<p>Ensures Defence T&E is performing as expected and continues to meet Defence's evolving needs by managing & influencing T&E Defence-wide.</p><ul><li>Provided by NADG to the Ministry of Defence.</li><li>Evolution of existing sponsorship organisations and delivery agents.</li></ul>"
+  },
+  "integration": {
+    "title": "Integration Services",
+    "content": "<ul><li>Custodian of user experience, assuring technical quality and seamless interaction of individual services.</li><li>Provided by NADG or an emboldened independent service provider, to the Management Service.</li><li>New service, to be piloted and spiralled to FOC between 2028 and 2033.</li></ul>"
+  },
+  "userSupport": {
+    "title": "User Support Services",
+    "content": "<ul><li>Helps users understand T&E and find and engage the best services for their needs, and MOD to understand market health.</li><li>Provided by Defence Digital via ServiceNow and the Integration Provider, to users, T&E service suppliers, regulators and the Management Service.</li><li>Evolution of existing pilot.</li></ul>"
+  },
+  "teServices": {
+    "title": "T&E Services",
+    "content": "<div class='grid grid-cols-1 md:grid-cols-2 gap-8'><div><p class='text-white font-bold mb-2'>STEP-funded T&E Services</p><ul><li>Responsive and affordable common and critical MOD owned or rented T&E capabilities, assets and services.</li><li>Accessible through User Support Services and provided by NADG to the Defence Enterprise.</li><li>Evolution of existing contracts and additional MOD T&E services funded by STEP.</li></ul></div><div><p class='text-white font-bold mb-2'>Other T&E Services</p><ul><li>A UK and international network of services, facilities and ranges, available for T&E.</li><li>Accessible through User Support Services and provided by public and private sector organisations, to the Defence Enterprise.</li><li>Provided through access to HMG gov't bookings, commercial frameworks and international MOUs.</li></ul></div></div>"
+  },
+  "innovation": {
+    "title": "Innovation Services",
+    "content": "<ul><li>Accelerates and optimises UK T&E R&D investment and de-risks STEP investment.</li><li>Provided by DSTL and their ind/int partners, to the Defence Enterprise and the Management Service, with matured innovations made available as T&E and Enabling Services.</li><li>Evolution of Range of the Future project, T&E Futures Project as well as DASA and Transformation funds.</li></ul>"
+  },
+  "enabling": {
+    "title": "Enabling Services",
+    "content": "<ul><li>Provides common enablers of T&E, where necessary to deliver the Portfolio's mission.</li><li>Accessible through User Support Services and provided by PAG, DSTL, DD and Commercial Providers, to the Defence Enterprise.</li><li>Evolution of existing policy work, pilot activity and current service provision.</li></ul>"
+  }
+}

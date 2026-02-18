@@ -45,3 +45,103 @@ body {
 .animate-ready {
   animation: pulse-glow 2.5s infinite ease-in-out;
 }
+
+@layer base {
+  h1 {
+    @apply    text-6xl 2xl:text-7xl mb-4 xl:mb-8 text-pretty leading-[94%];
+  }
+
+  h2 {
+    @apply    text-4xl 2xl:text-6xl mb-2 xl:mb-4 text-pretty leading-[94%];
+  }
+
+  h3 {
+    @apply    text-2xl 2xl:text-4xl mb-2 xl:mb-4 text-pretty leading-[94%];
+  }
+
+  h4 {
+    @apply   text-xl 2xl:text-2xl mb-2 xl:mb-4 text-pretty  leading-[94%];
+  }
+
+  h5 {
+    @apply  font-medium text-lg mb-2 xl:mb-4 2xl:text-xl text-pretty  leading-[120%];
+  }
+
+  h6 {
+    @apply  font-normal text-base xl:text-lg text-pretty mb-2 xl:mb-4 leading-[120%];
+  }
+
+
+  p, ul, ol {
+    @apply font-normal text-sm xl:text-base  text-pretty;
+  }
+
+  ul, ol {
+    @apply leading-tight ;
+  }
+}
+
+@layer components {
+  .p-xs {
+    @apply  text-xs text-pretty
+  }
+
+  .p-s {
+    @apply  text-sm text-pretty
+  }
+
+  .p-m {
+    @apply text-base text-pretty
+  }
+
+  .p-lg {
+    @apply  text-lg text-pretty;
+  }
+
+  .p-xl {
+    @apply  text-xl text-pretty;
+  }
+}
+
+ul {
+  list-style: none !important;
+  padding: 0 !important;
+  /*margin: 0 !important;*/
+}
+
+
+ul > li {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 0.5em;
+}
+
+ul > li::before {
+  content: '•';
+  color: inherit;
+  margin-right: 0.5em;
+  flex-shrink: 0;
+}
+
+/* Specific styling for ordered lists to ensure numbers are displayed */
+
+ol {
+  list-style-type: decimal !important;
+  padding-left: 2em !important;
+  margin-bottom: 0.5em !important;
+  display: block !important;
+}
+
+/* Specific styling for list items within ordered lists */
+
+ol > li {
+  list-style-type: decimal !important;
+  display: list-item !important;
+  margin-bottom: 0.5em;
+  margin-right: 0 !important;
+  padding: 0 !important;
+}
+
+ol > li::before {
+  content: none !important;
+}
