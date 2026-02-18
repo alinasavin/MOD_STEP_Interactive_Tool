@@ -33,7 +33,7 @@ function goHub() {
   <header class="sticky top-0 z-50 backdrop-blur-md bg-white/80 dark:bg-zinc-950/80 border-b border-zinc-200 dark:border-zinc-800 h-16 flex items-center px-6 justify-between transition-colors">
     <div class="flex items-center gap-4">
       <button @click="goHome" class="transition-opacity hover:opacity-80 flex items-center gap-2">
-        <h1 class="text-xl font-bold tracking-tight text-zinc-900 dark:text-white">
+        <h1 class="text-xl mb-0 font-bold tracking-tight text-zinc-900 dark:text-white">
           STEP
         </h1>
       </button>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, onMounted, onUnmounted, nextTick } from 'vue';
+import { computed, ref, onMounted, onUnmounted, nextTick, watch } from 'vue';
 import type { Diagram } from '../../types/diagram';
 import { calculateNodePositions } from '../../utils/diagramLayout';
 import DiagramNodeComponent from './DiagramNode.vue';
@@ -15,6 +15,7 @@ const props = defineProps<{
 
 const store = useDiagramStore();
 const containerRef = ref<HTMLElement | null>(null);
+const scrollBodyRef = ref<HTMLElement | null>(null);
 const containerWidth = ref(0);
 
 const updateDimensions = () => {
@@ -37,58 +38,91 @@ const layoutOptions = computed(() => props.diagram.layoutOptions || {});
 
 const dynamicCanvasHeight = computed(() => {
   if (layoutOptions.value.canvasHeight) return layoutOptions.value.canvasHeight;
-  const width = window.innerWidth;
-  if (width < 768) return 450;
-  if (width < 1280) return 550;
+  if (containerWidth.value < 768) return 450; // md
+  if (containerWidth.value < 1024) return 550; // lg
   return 650;
 });
 
+// Calculate content layout passing the current containerWidth
 const diagramLayout = computed(() => {
   const diagWithLayout = { ...props.diagram, layout: (props.layoutOverride || props.diagram.layout) as any };
 
-  const raw = calculateNodePositions(diagWithLayout, 5000, 2000);
+  // Use a virtual width of at least 1000 to ensure BFS doesn't clump
+  const raw = calculateNodePositions(diagWithLayout, Math.max(containerWidth.value, 1000), 2000);
   if (raw.length === 0) return { positions: [], width: 0, height: 0 };
 
   const pX = layoutOptions.value.paddingX ?? 100;
   const pY = 40;
-  const nodeHalfWidth = 128;
 
   const minX = Math.min(...raw.map(p => p.x));
   const maxX = Math.max(...raw.map(p => p.x));
   const minY = Math.min(...raw.map(p => p.y));
   const maxY = Math.max(...raw.map(p => p.y));
 
-  // Normalize: Top-most node in the cluster starts at pY
   const positions = raw.map(p => ({
     ...p,
-    x: (p.x - minX) + pX + nodeHalfWidth,
+    x: (p.x - minX) + pX + 128,
     y: (p.y - minY) + pY + 50
   }));
 
-  const totalWidth = (maxX - minX) + 256 + (pX * 2);
-  const totalHeight = (maxY - minY) + 100 + (pY * 2);
-
-  return { positions, width: totalWidth, height: totalHeight };
+  return {
+    positions,
+    width: (maxX - minX) + 256 + (pX * 2),
+    height: (maxY - minY) + 100 + (pY * 2)
+  };
 });
 
-const nodePositions = computed(() => diagramLayout.value.positions);
-const contentDimensions = computed(() => ({
-  width: diagramLayout.value.width,
-  height: diagramLayout.value.height
-}));
+// --- DYNAMIC SCALING (Safety Zoom) ---
+const scaleFactor = computed(() => {
+  if (containerWidth.value === 0) return 1;
+  const contentW = diagramLayout.value.width;
+  const availableW = containerWidth.value - 60; // Internal padding safety
 
+  if (contentW <= availableW) return 1;
+
+  // Zoom out if too wide, but cap at 65% zoom for readability
+  return Math.max(0.65, availableW / contentW);
+});
+
+// --- AUTO-FOLLOW PANNING ---
+// --- AUTO-FOLLOW PANNING (Cinematic Camera) ---
+watch(() => props.activeNodeIds, (newIds) => {
+  if (newIds.size === 0 || !scrollBodyRef.value) return;
+
+  const lastActiveId = Array.from(newIds).pop();
+  const pos = diagramLayout.value.positions.find(p => p.id === lastActiveId);
+
+  if (pos) {
+    nextTick(() => {
+      const scrollContainer = scrollBodyRef.value;
+      if (!scrollContainer) return;
+
+      // Calculate center taking scaling into account
+      const scaledX = pos.x * scaleFactor.value;
+      const targetX = scaledX - (containerWidth.value / 2);
+
+      scrollContainer.scrollTo({
+        left: targetX,
+        behavior: 'smooth'
+      });
+    });
+  }
+}, { deep: true });
+
+const nodePositions = computed(() => diagramLayout.value.positions);
+const contentDimensions = computed(() => ({ width: diagramLayout.value.width, height: diagramLayout.value.height }));
 const getPosition = (id: string) => nodePositions.value.find(p => p.id === id);
 </script>
 
 <template>
-  <div id="diagram-canvas-section" class="w-full pt-2 px-4 md:px-0">
+  <div id="diagram-canvas-section" class="w-full pt-2">
     <div
         ref="containerRef"
         class="relative mx-auto w-full bg-zinc-950/20 rounded-[3rem] md:rounded-[4rem] border border-zinc-800/50 shadow-2xl flex flex-col overflow-hidden"
         :style="{ height: `${dynamicCanvasHeight}px` }"
     >
       <!-- BANNER SECTION: Static at top -->
-      <div class="w-full flex justify-center pt-8 flex-shrink-0 z-30 bg-gradient-to-b from-zinc-950/40 to-transparent">
+      <div class="w-full flex justify-center pt-8 shrink-0 z-30 bg-linear-to-b from-zinc-950/40 to-transparent">
         <DiagramBanner :text="store.currentInstruction" :color="store.bannerColor" />
       </div>
 
@@ -97,16 +131,18 @@ const getPosition = (id: string) => nodePositions.value.find(p => p.id === id);
         - Added 'flex flex-col' so 'my-auto' on the child can calculate vertical centering.
       -->
       <div
-          ref="containerRef"
+          ref="scrollBodyRef"
           class="flex-1 w-full overflow-auto scrollbar-thin scrollbar-thumb-zinc-700 scrollbar-track-transparent flex flex-col"
       >
         <div
-            class="relative transition-all duration-700 my-auto flex-shrink-0"
+            class="relative transition-all duration-1000 my-auto shrink-0"
             :style="{
             width: `${contentDimensions.width}px`,
             height: `${contentDimensions.height}px`,
-            marginLeft: contentDimensions.width < containerWidth ? 'auto' : '0',
-            marginRight: contentDimensions.width < containerWidth ? 'auto' : '0'
+           marginLeft: (contentDimensions.width * scaleFactor) < containerWidth ? 'auto' : '0',
+            marginRight: (contentDimensions.width * scaleFactor) < containerWidth ? 'auto' : '0',
+            transform: `scale(${scaleFactor})`,
+            transformOrigin: 'center center'
           }"
         >
           <ConnectorLayer
@@ -129,7 +165,7 @@ const getPosition = (id: string) => nodePositions.value.find(p => p.id === id);
         </div>
 
         <!-- Bottom Buffer for scroll comfort -->
-        <div class="h-10 flex-shrink-0"></div>
+        <div class="h-10 shrink-0"></div>
       </div>
     </div>
   </div>
