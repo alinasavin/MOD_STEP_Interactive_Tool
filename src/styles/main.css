@@ -72,11 +72,11 @@ body {
   }
 
 
-  p, ul, ol {
+  p, ul, ol,li {
     @apply font-normal text-sm xl:text-base  text-pretty;
   }
 
-  ul, ol {
+  ul, ol,li {
     @apply leading-tight ;
   }
 }
