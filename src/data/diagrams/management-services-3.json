@@ -1,0 +1,92 @@
+{
+  "id": "management-services-3",
+  "layout": "hybrid",
+  "layoutOptions": {
+    "columnGap": 120,
+    "rowGap": 150,
+    "paddingX": 100,
+    "paddingY": 100,
+    "canvasHeight": 600
+  },
+  "entryNodeId": "user-entry",
+  "instruction": "HOVER ON EACH NODE TO LEARN MORE",
+  "activationMode": "reachable",
+  "nodes": [
+    {
+      "id": "user-entry",
+      "label": "UOR",
+      "description": "Urgent Operational Requirement",
+      "iconKey": "user",
+      "role": "entry",
+      "accentColor": "blue"
+    },
+    {
+      "id": "user-support-services",
+      "label": "User Support Services",
+      "iconKey": "guidance",
+      "role": "step",
+      "accentColor": "pink"
+    },
+    {
+      "id": "integration-services-1",
+      "label": "Integration Services",
+      "iconKey": "services",
+      "role": "step",
+      "accentColor": "emerald"
+    },
+    {
+      "id": "management-services",
+      "label": "Management Services",
+      "iconKey": "services",
+      "role": "step",
+      "accentColor": "emerald"
+    },
+    {
+      "id": "integration-services-2",
+      "label": "Integration Services",
+      "iconKey": "services",
+      "role": "step",
+      "accentColor": "emerald"
+    },
+    {
+      "id": "te-services",
+      "label": "T&E SERVICE",
+      "iconKey": "services",
+      "role": "step",
+      "accentColor": "blue",
+      "steps": [
+        {
+          "id": "enabling-services",
+          "description": "Enabling Services",
+          "accentColor": "orange"
+        }
+      ]
+    },
+    {
+      "id": "international-service",
+      "label": "T&E Service",
+      "iconKey": "services",
+      "description": "International Service",
+      "role": "step",
+      "accentColor": "blue",
+      "tooltipDescription": "Short Term Success"
+    },
+    {
+      "id": "innovation-services",
+      "label": "Innovation Services",
+      "iconKey": "services",
+      "role": "step",
+      "accentColor": "purple",
+      "tooltipDescription": "Long Term Success"
+    }
+  ],
+  "edges": [
+    { "from": "user-entry", "to": "user-support-services", "style": "dashed"},
+    { "from": "user-support-services", "to": "integration-services-1", "style": "dotted" },
+    { "from": "integration-services-1", "to": "management-services", "style": "dotted" },
+    { "from": "management-services", "to": "integration-services-2", "style": "dashed"},
+    { "from": "management-services", "to": "innovation-services", "style": "dashed"},
+    { "from": "integration-services-2", "to": "te-services", "style": "dotted" },
+    { "from": "integration-services-2", "to": "international-service", "style": "dotted" }
+  ]
+}

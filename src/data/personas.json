@@ -71,6 +71,12 @@
         "label": "Management Services",
         "diagramId": "management-services-2",
         "description": "I need to address a growing gap in capability testing."
+      },
+      {
+        "id": "management-services-3",
+        "label": "Management Services",
+        "diagramId": "management-services-3",
+        "description": "Urgent Operational Requirement (UOR)"
       }
     ]
   }

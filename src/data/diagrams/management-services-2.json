@@ -1,9 +1,9 @@
 {
-  "id": "management-services-1",
+  "id": "management-services-2",
   "layout": "hybrid",
   "layoutOptions": {
     "columnGap": 320,
-    "rowGap": 180,
+    "rowGap": 150,
     "paddingX": 100,
     "paddingY": 100,
     "canvasHeight": 600
@@ -43,16 +43,16 @@
       ]
     },
     {
-      "id": "investment-pot",
-      "label": "Investment Pot",
+      "id": "horizon-scan",
+      "label": "Horizon Scan",
       "iconKey": "guidance",
       "role": "step",
-      "accentColor": "purple"
+      "accentColor": "emerald"
     },
     {
-      "id": "te-services",
-      "label": "T&E SERVICE",
-      "iconKey": "services",
+      "id": "problem-statement",
+      "label": "Problem Statement",
+      "iconKey": "guidance",
       "role": "step",
       "accentColor": "blue"
     },
@@ -62,11 +62,26 @@
       "iconKey": "services",
       "role": "step",
       "accentColor": "purple"
+    },
+    {
+      "id": "te-services",
+      "label": "T&E SERVICE",
+      "iconKey": "services",
+      "role": "step",
+      "accentColor": "blue",
+      "steps": [
+        {
+          "id": "market-place",
+          "description": "Market Place",
+          "accentColor": "pink"
+        }
+      ]
     }
   ],
   "edges": [
-    { "from": "user-entry", "to": "investment-pot", "style": "dashed"},
-    { "from": "investment-pot", "to": "te-services", "style": "dotted" },
-    { "from": "investment-pot", "to": "innovation-services", "style": "dotted" }
+    { "from": "user-entry", "to": "horizon-scan", "style": "dashed"},
+    { "from": "horizon-scan", "to": "problem-statement", "style": "dotted" },
+    { "from": "problem-statement", "to": "innovation-services", "style": "dotted" },
+    { "from": "innovation-services", "to": "te-services", "style": "dotted" }
   ]
 }
