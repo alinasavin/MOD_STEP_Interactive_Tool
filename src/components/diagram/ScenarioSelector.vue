@@ -12,15 +12,16 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto mb-20">
+  <div class="grid grid-cols-1  gap-6 max-w-6xl mx-auto mb-20 justify-center"
+  :class="scenarios.length >= 3 ? 'md:grid-cols-2 lg:grid-cols-3' : 'md:grid-cols-2 lg:grid-cols-2'">
     <button
         v-for="scenario in scenarios"
         :key="scenario.id"
         @click="emit('update:modelValue', scenario.id)"
-        class="group text-left p-8 rounded-[2.5rem] border-2 transition-all duration-500 bg-zinc-950/40 backdrop-blur-sm"
+        class="group text-left p-8 rounded-[2.5rem] border-2 transition-all duration-500 bg-zinc-950/40 backdrop-blur-sm items-start flex"
         :class="[
         modelValue === scenario.id
-          ? 'border-bright-grey shadow-[0_0_30px_rgba(236,72,153,0.2)] scale-[1.02]'
+          ? 'border-bright-grey shadow-[0_0_30px_rgba(190, 205, 214,0.2)] scale-[1.02]'
           : 'border-zinc-800 hover:border-zinc-700 opacity-70 hover:opacity-100'
       ]"
     >
