@@ -16,7 +16,7 @@
     {
       "id": "integration-services",
       "description": "Integration Services",
-      "accentColor": "purple",
+      "accentColor": "grey",
       "role": "overview"
     }
   ],
@@ -27,34 +27,53 @@
       "description": "T&E USER",
       "iconKey": "user",
       "role": "entry",
-      "accentColor": "pink"
+      "accentColor": "white"
     },
     {
       "id": "user-support-services",
       "label": "User Support Services",
-      "description": "Market Place",
+
       "iconKey": "guidance",
       "role": "step",
-      "accentColor": "green",
-      "tooltipDescription": "Additional Information"
+      "accentColor": "pink",
+      "tooltipDescription": "Additional Information",
+      "steps": [
+        {
+          "id": "market-place",
+          "description": "Market Place",
+          "accentColor": "pink"
+        }
+      ]
     },
     {
       "id": "te-services",
       "label": "T&E SERVICES",
-      "description": "Enabling Services",
       "iconKey": "services",
       "role": "step",
       "accentColor": "blue",
-      "tooltipDescription": "Additional Information"
+      "tooltipDescription": "Additional Information",
+      "steps": [
+        {
+          "id": "enabling-services",
+          "description": "Enabling Services",
+          "accentColor": "orange"
+        }
+      ]
     },
     {
       "id": "test",
       "label": "TEST",
-      "description": "Test T&E Data Services",
       "iconKey": "portfolio",
       "role": "step",
-      "accentColor": "green",
-      "tooltipDescription": "Additional Information"
+      "accentColor": "grey",
+      "tooltipDescription": "Additional Information",
+      "steps": [
+        {
+          "id": "test-services",
+          "description": "Test T&E Data Services",
+          "accentColor": "orange"
+        }
+      ]
     },
     {
       "id": "user-feedback",
@@ -67,9 +86,7 @@
     }
   ],
   "edges": [
-    { "from": "user-entry", "to": "user-support-services", "style": "dotted",
-      "color": "pink"
-    },
+    { "from": "user-entry", "to": "user-support-services", "style": "dotted"},
     { "from": "user-support-services", "to": "te-services", "style": "dotted" },
     { "from": "te-services", "to": "test", "style": "dotted" },
     { "from": "test", "to": "user-feedback", "style": "dotted" },

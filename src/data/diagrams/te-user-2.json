@@ -16,7 +16,7 @@
     {
       "id": "integration-services",
       "description": "Integration Services",
-      "accentColor": "purple",
+      "accentColor": "grey",
       "role": "overview"
     }
   ],
@@ -27,7 +27,7 @@
       "description": "T&E USER",
       "iconKey": "user",
       "role": "entry",
-      "accentColor": "pink"
+      "accentColor": "white"
     },
     {
       "id": "user-support-services",
@@ -50,7 +50,7 @@
         {
           "id": "sqep",
           "description": "Integration Service SQEP",
-          "accentColor": "purple"
+          "accentColor": "grey"
         }
       ]
     },

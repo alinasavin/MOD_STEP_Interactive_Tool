@@ -72,10 +72,10 @@ const getStepColorClasses = (color?: string) => `accent-${color || 'pink'}`;
 <!--          </div>-->
         </div>
         <div>
-           <div class="text-[9px] font-black uppercase tracking-[0.2em] mb-0.5 transition-colors" :class="isActive ? 'text-inherit' : 'text-zinc-500'">
-             {{ node.label }}
+           <div v-if="node.label" class="text-xs font-black uppercase tracking-[0.2em] mb-1 transition-colors" :class="isActive ? 'text-inherit' : 'text-zinc-500'">
+             {{ node?.label }}
            </div>
-           <h4 class="text-sm font-bold text-white leading-tight">{{ node.description }}</h4>
+           <p v-if="node.description" class="text-sm font-bold text-white leading-tight mb-0">{{ node?.description }}</p>
         </div>
       </div>
 

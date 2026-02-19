@@ -24,20 +24,25 @@
 
   --color-dark-grey: #27272a;
 
+  --color-white: #ffffff;
+
 
 }
 
 :root {
-  --accent-color: var(--color-bright-pink);
+  --accent-color: var(--color-white);
   --accent-glow: rgba(244, 114, 182, 0.2);
   --accent-bg: rgba(244, 114, 182, 0.05);
 }
 
-.accent-pink { --accent-color: var(--color-bright-pink); --accent-glow: rgba(244, 114, 182, 0.2); --accent-bg: rgba(244, 114, 182, 0.05); }
-.accent-green { --accent-color: var(--color-bright-green); --accent-glow: rgba(52, 211, 153, 0.2); --accent-bg: rgba(52, 211, 153, 0.05); }
-.accent-blue { --accent-color: var(--color-bright-blue); --accent-glow: rgba(96, 165, 250, 0.2); --accent-bg: rgba(96, 165, 250, 0.05); }
-.accent-orange { --accent-color: var(--color-bright-orange); --accent-glow: rgba(251, 146, 60, 0.2); --accent-bg: rgba(251, 146, 60, 0.05); }
-.accent-purple { --accent-color: var(--color-bright-purple); --accent-glow: rgba(192, 132, 252, 0.2); --accent-bg: rgba(192, 132, 252, 0.05); }
+.accent-pink { --accent-color: var(--color-bright-pink); --accent-glow: rgba(240, 135, 207, 0.2); --accent-bg: rgba(240, 135, 207, 0.05); }
+.accent-grey { --accent-color: var(--color-bright-grey); --accent-glow: rgba(190, 205, 214, 0.2); --accent-bg: rgba(190, 205, 214, 0.05); }
+.accent-green { --accent-color: var(--color-bright-green); --accent-glow: rgba(0, 206, 125, 0.2); --accent-bg: rgba(0, 206, 125, 0.05); }
+.accent-blue { --accent-color: var(--color-bright-blue); --accent-glow: rgba(61, 181, 230, 0.2); --accent-bg: rgba(61, 181, 230, 0.05); }
+.accent-orange { --accent-color: var(--color-bright-orange); --accent-glow: rgba(255, 132, 0, 0.2); --accent-bg: rgba(255, 132, 0, 0.05); }
+.accent-yellow { --accent-color: var(--color-bright-yellow); --accent-glow: rgba(255, 198, 0, 0.2); --accent-bg: rgba(255, 198, 0, 0.05); }
+.accent-purple { --accent-color: var(--color-bright-purple); --accent-glow: rgba(171, 146, 225, 0.2); --accent-bg: rgba(171, 146, 225, 0.05); }
+.accent-white { --accent-color: var(--color-white); --accent-glow: rgba(255, 255, 255, 0.2); --accent-bg: rgba(255, 255, 255, 0.05); }
 
 body {
   margin: 0;
