@@ -1,4 +1,10 @@
-import type { Diagram, NodePosition } from '../types/diagram';
+import type { Diagram } from '../types/diagram';
+
+export interface NodePosition {
+  id: string;
+  x: number;
+  y: number;
+}
 
 export function calculateNodePositions(
     diagram: Diagram,
