@@ -5,6 +5,8 @@ import type { NodePosition } from '../../utils/diagramLayout';
 const props = defineProps<{
   edges: Edge[];
   nodes: Node[];
+  overviewNodes?: Node[];
+  topNodes?: Node[];
   positions: NodePosition[];
   activeNodeIds: Set<string>;
   dimensions: { width: number; height: number };
@@ -15,11 +17,17 @@ const BASE_NODE_HEIGHT = 100;
 const STEP_NODE_HEIGHT = 180;
 
 const getPos = (id: string) => props.positions.find(p => p.id === id);
-const findNode = (id: string) => props.nodes.find(n => n.id === id);
+const findNode = (id: string) => {
+  return props.nodes.find(n => n.id === id) ||
+      props.overviewNodes?.find(n => n.id === id) ||
+      props.topNodes?.find(n => n.id === id);
+};
 
 const getNodeHeight = (node?: Node) => {
   if (!node) return BASE_NODE_HEIGHT;
-  return (node.steps && node.steps.length > 0) ? STEP_NODE_HEIGHT : BASE_NODE_HEIGHT;
+  return (node.steps && node.steps.length > 0) || (node.parallelSteps && node.parallelSteps.length > 0)
+      ? STEP_NODE_HEIGHT
+      : BASE_NODE_HEIGHT;
 };
 
 const getPath = (edge: Edge) => {
@@ -34,9 +42,11 @@ const getPath = (edge: Edge) => {
   const dy = toPos.y - fromPos.y;
 
   // 1. STRICT OVERVIEW CHECK: Only use Top/Bottom anchors if one node is 'overview'
-  const isOverviewConnection = fromNode?.role === 'overview' || toNode?.role === 'overview';
+  const isVertical = fromNode?.role === 'overview' || fromNode?.role === 'top' ||
+      toNode?.role === 'overview' || toNode?.role === 'top' ||
+      Math.abs(dy) > 100;
 
-  if (isOverviewConnection) {
+  if (isVertical) {
     const fromH = getNodeHeight(fromNode) / 2;
     const toH = getNodeHeight(toNode) / 2;
 
@@ -48,7 +58,15 @@ const getPath = (edge: Edge) => {
 
     // Use vertical tension for the loop-back
     const vTension = Math.abs(dy) * 0.5;
-    return `M ${sX} ${sY} C ${sX} ${sY + (dy > 0 ? vTension : -vTension)}, ${eX} ${eY - (dy > 0 ? vTension : -vTension)}, ${eX} ${eY}`;
+    // FIX: If line is perfectly vertical, add 1px bulge so glow filter doesn't vanish
+    const isPerfectlyVertical = Math.abs(dx) < 1;
+    const cp1x = isPerfectlyVertical ? sX + 1 : sX;
+    const cp2x = isPerfectlyVertical ? eX - 1 : eX;
+
+    const cp1y = dy > 0 ? sY + vTension : sY - vTension;
+    const cp2y = dy > 0 ? eY - vTension : eY + vTension;
+
+    return `M ${sX} ${sY} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${eX} ${eY}`;
   }
 
   // 2. STANDARD FLOW & TREE LOGIC (Side-to-Side)

@@ -156,13 +156,15 @@ const getPosition = (id: string) => nodePositions.value.find(p => p.id === id);
         >
           <ConnectorLayer
               :edges="diagram.edges"
-              :nodes="[...(diagram.overviewNodes || []), ...diagram.nodes]"
+              :nodes="diagram.nodes"
+              :overviewNodes="diagram.overviewNodes"
+              :topNodes="diagram.topNodes"
               :positions="nodePositions"
               :activeNodeIds="activeNodeIds"
               :dimensions="contentDimensions"
           />
 
-          <template v-for="node in [...(diagram.overviewNodes || []), ...diagram.nodes]" :key="node.id">
+          <template v-for="node in [...(diagram.topNodes || []), ...(diagram.overviewNodes || []), ...diagram.nodes]" :key="node.id">
             <DiagramNodeComponent
                 v-if="getPosition(node.id)"
                 :node="node"

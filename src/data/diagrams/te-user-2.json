@@ -12,12 +12,22 @@
   "entryNodeId": "user-entry",
   "instruction": "HOVER ON EACH NODE TO LEARN MORE",
   "activationMode": "reachable",
+  "topNodes": [
+    {
+      "id": "management-services",
+      "description": "Management Services",
+      "accentColor": "green",
+      "role": "top",
+      "width":800
+    }
+  ],
   "overviewNodes": [
     {
       "id": "integration-services",
       "description": "Integration Services",
       "accentColor": "grey",
-      "role": "overview"
+      "role": "overview",
+      "width": 800
     }
   ],
   "nodes": [
@@ -94,9 +104,8 @@
     }
   ],
   "edges": [
-    { "from": "user-entry", "to": "user-support-services", "style": "dashed",
-      "color": "pink"
-    },
+    { "from": "management-services", "to": "integration-services", "style": "dashed"},
+    { "from": "user-entry", "to": "user-support-services", "style": "dashed"},
     { "from": "user-support-services", "to": "test-plan", "style": "dotted" },
     { "from": "test-plan", "to": "te-services", "style": "dotted" },
     { "from": "te-services", "to": "test", "style": "dotted",

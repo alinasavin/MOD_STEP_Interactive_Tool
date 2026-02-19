@@ -31,6 +31,7 @@ export const useDiagramStore = defineStore('diagram', () => {
 
     // Combine all nodes so overview nodes also animate in
     const allNodes = [
+      ...(diagram.topNodes || []),
       ...(diagram.overviewNodes || []),
       ...diagram.nodes
     ];

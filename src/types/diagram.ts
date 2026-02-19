@@ -5,6 +5,7 @@ export interface DiagramStep {
   iconKey?: string;
   accentColor?: string;
   tooltipDescription? : string;
+  subSteps?: DiagramStep[];
 }
 
 export interface DiagramNode {
@@ -12,10 +13,12 @@ export interface DiagramNode {
   label: string;
   description: string;
   iconKey: string | null;
-  role: 'entry' | 'step' | 'end' | 'overview';
+  role: 'entry' | 'step' | 'end' | 'overview' | 'top';
   steps?: DiagramStep[];
+  parallelSteps?: DiagramStep[];
   accentColor?: string;
   tooltipDescription?: string;
+  width?: number;
 }
 
 export interface Edge {
@@ -34,6 +37,7 @@ export interface LayoutOptions {
   paddingY?: number;
   canvasHeight?: number;
   overviewGap?: number;
+  topGap?: number;
 }
 
 
@@ -48,4 +52,5 @@ export interface Diagram {
   activationMode: 'all' | 'reachable';
   instruction: string;
   overviewNodes?: DiagramNode[];
+  topNodes?: DiagramNode[];
 }
