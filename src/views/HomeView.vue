@@ -1,18 +1,15 @@
 <script setup lang="ts">
-import { onMounted } from 'vue';
 import { useDiagramModal } from '../composables/useDiagramModal';
 import PageShell from '../components/layout/PageShell.vue';
 import { useRouter } from 'vue-router';
 
+
 const { open } = useDiagramModal();
 const router = useRouter();
 
-onMounted(() => {
-  open();
-});
-
 function enterHub() {
   router.push({ name: 'hub' });
+  open();
 }
 </script>
 

@@ -39,7 +39,6 @@ function goHub() {
       </button>
 
       <template v-if="currentPersona">
-        <div class="h-4 w-[1px] bg-zinc-300 dark:bg-zinc-700 mx-2"></div>
         <div class="flex items-center gap-3">
           <span class="text-sm font-medium text-zinc-500 dark:text-zinc-400">
             {{ currentPersona.title }}
@@ -71,21 +70,21 @@ function goHub() {
       <button
         @click="open"
         class="p-2.5 rounded-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 transition-all group relative"
-        :class="{ 'ring-2 ring-pink-500 shadow-[0_0_15px_rgba(236,72,153,0.5)]': isPulsing }"
+        :class="{ 'ring-2 ring-bright-pink shadow-[0_0_15px_rgba(236,72,153,0.5)]': isPulsing }"
         title="View Full Diagram"
       >
         <div class="w-5 h-5 flex flex-col gap-[2px] transition-transform duration-300 group-hover:scale-110" :class="{ 'animate-bounce': isPulsing }">
           <div class="flex items-start gap-[2px] h-[45%]">
-            <div class="flex-grow flex flex-col gap-[2px] h-full">
-              <div class="h-1/2 bg-emerald-500 rounded-sm"></div>
-              <div class="h-1/2 bg-emerald-500 rounded-sm"></div>
+            <div class="grow flex flex-col gap-0.5 h-full">
+              <div class="h-1/2 bg-bright-green rounded-sm"></div>
+              <div class="h-1/2 bg-bright-green rounded-sm"></div>
             </div>
-            <div class="w-[28%] h-full bg-purple-600 rounded-sm flex-shrink-0"></div>
+            <div class="w-[28%] h-full bg-bright-purple rounded-sm flex-shrink-0"></div>
           </div>
           <div class="grid grid-cols-[2fr_3fr_2fr] gap-[2px] h-[55%]">
-            <div class="bg-pink-500 rounded-sm"></div>
-            <div class="bg-cyan-500 rounded-sm"></div>
-            <div class="bg-orange-500 rounded-sm"></div>
+            <div class="bg-bright-pink rounded-sm"></div>
+            <div class="bg-bright-blue rounded-sm"></div>
+            <div class="bg-bright-orange rounded-sm"></div>
           </div>
         </div>
       </button>

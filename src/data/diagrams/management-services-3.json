@@ -32,21 +32,21 @@
       "label": "Integration Services",
       "iconKey": "services",
       "role": "step",
-      "accentColor": "emerald"
+      "accentColor": "green"
     },
     {
       "id": "management-services",
       "label": "Management Services",
       "iconKey": "services",
       "role": "step",
-      "accentColor": "emerald"
+      "accentColor": "green"
     },
     {
       "id": "integration-services-2",
       "label": "Integration Services",
       "iconKey": "services",
       "role": "step",
-      "accentColor": "emerald"
+      "accentColor": "green"
     },
     {
       "id": "te-services",

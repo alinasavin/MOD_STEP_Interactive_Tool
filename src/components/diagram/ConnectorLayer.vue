@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { computed } from 'vue';
 import type { Edge, DiagramNode as Node } from '../../types/diagram';
 import type { NodePosition } from '../../utils/diagramLayout';
 
@@ -81,10 +80,10 @@ const isActive = (edge: Edge) => props.activeNodeIds.has(edge.from) && props.act
 
 const getStrokeColor = (edge: Edge) => {
   if (!isActive(edge)) return '#27272a';
-  if (edge.color) return `var(--color-accent-${edge.color.toLowerCase()}, #ec4899)`;
+  if (edge.color) return `var(--color-bright-${edge.color.toLowerCase()}, #ab92e1 )`;
   const fromNode = findNode(edge.from);
-  const colorKey = fromNode?.accentColor?.toLowerCase().trim() || 'pink';
-  return `var(--color-accent-${colorKey}, #ec4899)`;
+  const colorKey = fromNode?.accentColor?.toLowerCase().trim() || 'bright-grey';
+  return `var(--color-bright-${colorKey}, #ab92e1 )`;
 };
 
 const getDashArray = (edge: Edge) => {

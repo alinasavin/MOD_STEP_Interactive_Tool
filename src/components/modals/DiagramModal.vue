@@ -34,7 +34,7 @@ const { isOpen, close } = useDiagramModal();
           </div>
 
           <!-- Integration Card -->
-          <div class="p-8 border-2 rounded-[2.5rem] flex-1 bg-[#4DE364]/20">
+          <div class="p-8 border-2 rounded-[2.5rem] flex-1 bg-bright-green/20">
             <h4 class="font-black mb-4  tracking-tight">
               {{ stepData.integration.title }}
             </h4>
@@ -44,7 +44,7 @@ const { isOpen, close } = useDiagramModal();
 
         <!-- Right 1/3 Column: Innovation -->
         <div class="lg:col-span-4 flex flex-col">
-          <div class="p-8 border-2 rounded-[2.5rem] h-full bg-accent-purple/20">
+          <div class="p-8 border-2 rounded-[2.5rem] h-full bg-bright-purple/20">
             <h4 class=" font-black mb-4  tracking-tight">
               {{ stepData.innovation.title }}
             </h4>
@@ -58,7 +58,7 @@ const { isOpen, close } = useDiagramModal();
 
         <!-- User Support -->
         <div class="lg:col-span-4 flex flex-col">
-          <div class="p-8 border-2 rounded-[2.5rem] h-full bg-accent-pink/20">
+          <div class="p-8 border-2 rounded-[2.5rem] h-full bg-bright-pink/20">
             <h4 class="font-black mb-4  tracking-tight" >
               {{ stepData.userSupport.title }}
             </h4>
@@ -68,7 +68,7 @@ const { isOpen, close } = useDiagramModal();
 
         <!-- T&E Services -->
         <div class="lg:col-span-4 flex flex-col">
-          <div class="p-8 border-2 rounded-[2.5rem] h-full bg-accent-blue/20" >
+          <div class="p-8 border-2 rounded-[2.5rem] h-full bg-bright-blue/20" >
             <h4 class=" font-black mb-4 tracking-tight" >
               {{ stepData.teServices.title }}
             </h4>
@@ -78,7 +78,7 @@ const { isOpen, close } = useDiagramModal();
 
         <!-- Enabling Services -->
         <div class="lg:col-span-4 flex flex-col">
-          <div class="p-8 border-2 rounded-[2.5rem] h-full bg-accent-orange/20" >
+          <div class="p-8 border-2 rounded-[2.5rem] h-full bg-bright-orange/20" >
             <h4 class=" mb-4 tracking-tight" >
               {{ stepData.enabling.title }}
             </h4>

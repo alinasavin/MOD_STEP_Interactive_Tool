@@ -41,7 +41,7 @@
       "description": "Validate Application",
       "iconKey": "services",
       "role": "step",
-      "accentColor": "emerald"
+      "accentColor": "green"
     },
     {
       "id": "te-services",
@@ -76,7 +76,7 @@
     { "from": "user-support-services", "to": "validate", "style": "dotted" },
     { "from": "validate", "to": "te-services", "style": "dotted" },
     { "from": "te-services", "to": "proposal-offer", "style": "dotted",
-      "color": "emerald"
+      "color": "green"
     }
   ]
 }

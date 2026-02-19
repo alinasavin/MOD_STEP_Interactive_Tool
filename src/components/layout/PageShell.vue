@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import HeaderNav from './HeaderNav.vue';
-import DiagramModal from '../modals/DiagramModal.vue';
+
 </script>
 
 <template>
@@ -12,6 +12,5 @@ import DiagramModal from '../modals/DiagramModal.vue';
     <footer class="py-6 border-t border-zinc-200 dark:border-zinc-800 text-center text-zinc-500 text-sm">
       <p>&copy; {{ new Date().getFullYear() }} STEP Process Framework.</p>
     </footer>
-    <DiagramModal />
   </div>
 </template>

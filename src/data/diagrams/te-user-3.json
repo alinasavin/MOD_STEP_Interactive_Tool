@@ -85,7 +85,7 @@
       "description": "Test T&E Data Services",
       "iconKey": "portfolio",
       "role": "step",
-      "accentColor": "emerald",
+      "accentColor": "green",
       "tooltipDescription": "Additional Information"
     }
   ],
@@ -94,7 +94,7 @@
     { "from": "user-support-services", "to": "test-plan", "style": "dotted" },
     { "from": "test-plan", "to": "te-services", "style": "dotted" },
     { "from": "te-services", "to": "test", "style": "dotted",
-      "color": "emerald"
+      "color": "green"
     }
   ]
 }

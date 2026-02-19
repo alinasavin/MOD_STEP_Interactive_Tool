@@ -20,13 +20,13 @@ const emit = defineEmits<{
         class="group text-left p-8 rounded-[2.5rem] border-2 transition-all duration-500 bg-zinc-950/40 backdrop-blur-sm"
         :class="[
         modelValue === scenario.id
-          ? 'border-pink-500 shadow-[0_0_30px_rgba(236,72,153,0.2)] scale-[1.02]'
+          ? 'border-bright-grey shadow-[0_0_30px_rgba(236,72,153,0.2)] scale-[1.02]'
           : 'border-zinc-800 hover:border-zinc-700 opacity-70 hover:opacity-100'
       ]"
     >
-      <h3 class="text-xl font-bold text-white mb-2 group-hover:text-pink-400 transition-colors">
-        {{ scenario.label }}
-      </h3>
+<!--      <h3 class="text-xl font-bold text-white mb-2 group-hover:text-pink-400 transition-colors">-->
+<!--        {{ scenario.label }}-->
+<!--      </h3>-->
       <p class="text-white text-sm leading-relaxed font-light">
         {{ scenario.description }}
       </p>

@@ -114,7 +114,7 @@
     { "from": "te-services", "to": "enabling-services", "style": "dotted" },
     { "from": "te-services", "to": "gap-enabling-services", "style": "dotted" },
     { "from": "enabling-services", "to": "proposal-offer", "style": "dotted",
-      "color": "emerald"
+      "color": "green"
     },
     { "from": "gap-enabling-services", "to": "innovation-services", "style": "dotted"}
   ]

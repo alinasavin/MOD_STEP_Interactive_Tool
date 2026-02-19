@@ -29,7 +29,7 @@ const getStepColorClasses = (color?: string) => `accent-${color || 'pink'}`;
     :style="{
       left: `${x}px`,
       top: `${y}px`,
-      '--node-accent': `var(--color-accent-${accentColor})`
+      '--node-accent': `var(--color-bright-${accentColor})`
     }"
 
   :class="[
@@ -37,7 +37,7 @@ const getStepColorClasses = (color?: string) => `accent-${color || 'pink'}`;
   ]"
   >
     <button
-      class="w-64 p-5 bg-zinc-950/80 backdrop-blur-sm border-2 rounded-[2rem] text-left relative transition-all duration-500 hover:scale-[1.02] focus:outline-none"
+      class="w-64 p-5 bg-zinc-950/80 backdrop-blur-sm border-2 rounded-4xl text-left relative transition-all duration-500 hover:scale-[1.02] focus:outline-none"
       :style="{
         borderColor: isActive ? 'var(--accent-color)' : '',
         color: isActive ? 'var(--accent-color)' : '',
@@ -58,14 +58,14 @@ const getStepColorClasses = (color?: string) => `accent-${color || 'pink'}`;
 
       <div class="flex items-center gap-4 mb-3">
         <div
-          class="p-2.5 rounded-xl border-2 transition-colors flex-shrink-0"
+          class="p-2.5 rounded-xl border-2 transition-colors shrink-0"
           :class="isActive ? colorClasses : 'bg-zinc-900 border-zinc-800 text-zinc-600'"
         >
           <svg v-if="iconPath" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" :d="iconPath" />
           </svg>
           <!-- Checkmark for active step nodes (except entry) -->
-<!--          <div v-if="isActive && node.role !== 'entry'" class="absolute -top-1 -right-1 bg-emerald-500 text-white rounded-full p-0.5">-->
+<!--          <div v-if="isActive && node.role !== 'entry'" class="absolute -top-1 -right-1 bg-bright-green text-white rounded-full p-0.5">-->
 <!--             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">-->
 <!--                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />-->
 <!--             </svg>-->

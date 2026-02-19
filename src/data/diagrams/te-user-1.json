@@ -35,7 +35,7 @@
       "description": "Market Place",
       "iconKey": "guidance",
       "role": "step",
-      "accentColor": "emerald",
+      "accentColor": "green",
       "tooltipDescription": "Additional Information"
     },
     {
@@ -53,7 +53,7 @@
       "description": "Test T&E Data Services",
       "iconKey": "portfolio",
       "role": "step",
-      "accentColor": "emerald",
+      "accentColor": "green",
       "tooltipDescription": "Additional Information"
     },
     {
@@ -62,7 +62,7 @@
       "description": "User Feedback",
       "iconKey": "check",
       "role": "end",
-      "accentColor": "emerald",
+      "accentColor": "green",
       "tooltipDescription": "Additional Information"
     }
   ],
@@ -77,7 +77,7 @@
       "from": "user-feedback",
       "to": "integration-services",
       "style": "dashed",
-      "color": "emerald"
+      "color": "green"
     }
   ]
 }

@@ -18,12 +18,12 @@
       "description": "Management Services",
       "iconKey": "user",
       "role": "entry",
-      "accentColor": "emerald",
+      "accentColor": "green",
       "steps": [
         {
           "id": "analyze",
           "description": "Analyze",
-          "accentColor": "emerald"
+          "accentColor": "green"
         },
         {
           "id": "enabling-services",
