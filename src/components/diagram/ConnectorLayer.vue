@@ -41,24 +41,21 @@ const getPath = (edge: Edge) => {
   const dx = toPos.x - fromPos.x;
   const dy = toPos.y - fromPos.y;
 
-  // 1. STRICT OVERVIEW CHECK: Only use Top/Bottom anchors if one node is 'overview'
-  const isVertical = fromNode?.role === 'overview' || fromNode?.role === 'top' ||
-      toNode?.role === 'overview' || toNode?.role === 'top' ||
-      Math.abs(dy) > 100;
+  // FIX: ONLY use vertical anchoring if one of the nodes is a 'top' or 'overview' layer.
+  // We removed the Math.abs(dy) > 100 check so tree branches stay side-to-side.
+  const isLayerConnection = fromNode?.role === 'overview' || fromNode?.role === 'top' ||
+      toNode?.role === 'overview' || toNode?.role === 'top';
 
-  if (isVertical) {
+  if (isLayerConnection) {
     const fromH = getNodeHeight(fromNode) / 2;
     const toH = getNodeHeight(toNode) / 2;
 
-    // Anchor to middle-top or middle-bottom
     const sX = fromPos.x;
-    const sY = dy < 0 ? fromPos.y - fromH : fromPos.y + fromH;
+    const sY = dy > 0 ? fromPos.y + fromH : fromPos.y - fromH;
     const eX = toPos.x;
-    const eY = dy < 0 ? toPos.y + toH : toPos.y - toH;
+    const eY = dy > 0 ? toPos.y - toH : toPos.y + toH;
 
-    // Use vertical tension for the loop-back
     const vTension = Math.abs(dy) * 0.5;
-    // FIX: If line is perfectly vertical, add 1px bulge so glow filter doesn't vanish
     const isPerfectlyVertical = Math.abs(dx) < 1;
     const cp1x = isPerfectlyVertical ? sX + 1 : sX;
     const cp2x = isPerfectlyVertical ? eX - 1 : eX;
@@ -68,9 +65,8 @@ const getPath = (edge: Edge) => {
 
     return `M ${sX} ${sY} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${eX} ${eY}`;
   }
-
-  // 2. STANDARD FLOW & TREE LOGIC (Side-to-Side)
   else {
+    // STANDARD FLOW & TREE LOGIC (Side-to-Side)
     const dir = Math.sign(dx) || 1;
     const halfW = NODE_WIDTH / 2;
 
@@ -80,17 +76,18 @@ const getPath = (edge: Edge) => {
     const eX = toPos.x - (halfW * dir);
     const eY = toPos.y;
 
-    // THE CLEAN TREE FIX:
-    // Set control points to the midpoint of X.
-    // This creates a perfect, balanced "S" curve for tree branches.
-    const midX = sX + (dx - (NODE_WIDTH * dir)) / 2;
+    // CALCULATE SMOOTH S-CURVE
+    // We use two control points at the midpoint of X to create the "Ice Tree" look
+    const gapX = eX - sX;
+    const cp1x = sX + (gapX * 0.5);
+    const cp2x = eX - (gapX * 0.5);
 
-    // 1px bulge fix for perfectly horizontal lines
+    // 1px bulge fix for horizontal lines
     const isHorizontal = Math.abs(dy) < 1;
     const ctrlY1 = isHorizontal ? sY - 1 : sY;
     const ctrlY2 = isHorizontal ? eY + 1 : eY;
 
-    return `M ${sX} ${sY} C ${midX} ${ctrlY1}, ${midX} ${ctrlY2}, ${eX} ${eY}`;
+    return `M ${sX} ${sY} C ${cp1x} ${ctrlY1}, ${cp2x} ${ctrlY2}, ${eX} ${eY}`;
   }
 };
 
