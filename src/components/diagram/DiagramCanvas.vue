@@ -131,7 +131,7 @@ const getPosition = (id: string) => nodePositions.value.find(p => p.id === id);
         :style="{ height: `${dynamicCanvasHeight}px` }"
     >
       <!-- BANNER SECTION: Static at top -->
-      <div class="w-full flex justify-center pt-8 shrink-0 z-30 bg-linear-to-b from-zinc-950/40 to-transparent">
+      <div v-if="store.currentInstruction" class="w-full flex justify-center pt-8 shrink-0 z-30 bg-linear-to-b from-zinc-950/40 to-transparent">
         <DiagramBanner :text="store.currentInstruction" :color="store.bannerColor" />
       </div>
 

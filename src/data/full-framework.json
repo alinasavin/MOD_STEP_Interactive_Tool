@@ -1,0 +1,97 @@
+{
+  "id": "full-framework",
+  "layout": "hybrid",
+  "layoutOptions": {
+    "columnGap": 380,
+    "rowGap": 150,
+    "paddingX": 150,
+    "paddingY": 100,
+    "canvasHeight": 800,
+    "overviewGap": 320,
+    "topGap": 100
+  },
+  "entryNodeId": "user-support",
+  "instruction": "FULL STEP PROCESS FRAMEWORK",
+  "activationMode": "all",
+  "topNodes": [
+    {
+      "id": "management-services",
+      "description": "T&E Management Services",
+      "accentColor": "green",
+      "role": "top",
+      "width": 800
+    }
+  ],
+  "overviewNodes": [
+    {
+      "id": "integration-services",
+      "description": "STEP Integration Services",
+      "accentColor": "grey",
+      "role": "overview",
+      "width": 800
+    }
+  ],
+  "nodes": [
+    {
+      "id": "user-support",
+      "label": "User Support Services",
+      "accentColor": "pink",
+      "role": "entry",
+      "steps": [
+        { "id": "user-support-1", "description": "T&E Marketplace",
+          "accentColor": "pink"
+        },
+        { "id": "user-support-2", "description": "T&E Knowledge Hub",
+          "accentColor": "pink"
+        },
+        { "id": "user-support-3", "description": "T&E Market Analysis",
+          "accentColor": "pink"
+        }
+      ]
+    },
+    {
+      "id": "te-services-main",
+      "label": "T&E Services",
+      "description": "Infrastructure & Ranges",
+      "accentColor": "blue",
+      "role": "step",
+      "width": 600,
+      "steps": [
+        { "id": "sf1", "label": "STEP-FUNDED T&E", "description": "Govt Owned (GOCO) Services" },
+        { "id": "sf2", "description": "Contractor Owned (COCO) Services" },
+        { "id": "sf3", "description": "Internationally agreed T&E" }
+      ],
+      "parallelSteps": [
+        { "id": "ot1", "label": "OTHER T&E SERVICES", "description": "Other GOCO/GOGO Services" },
+        { "id": "ot2", "description": "UK T&E Services" },
+        { "id": "ot3", "description": "International Market T&E" }
+      ]
+    },
+    {
+      "id": "enabling-services",
+      "label": "Enabling Services",
+      "description": "Common Enablers",
+      "accentColor": "orange",
+      "role": "step",
+      "steps": [
+        { "id": "e1", "description": "High Performance Computing" },
+        { "id": "e2", "description": "SofS Federation Services" },
+        { "id": "e3", "description": "T&E Data Services" },
+        { "id": "e4", "description": "Deployable T&E enablers" }
+      ]
+    },
+    {
+      "id": "innovation-services",
+      "description": "Innovation Services",
+      "accentColor": "purple",
+      "role": "end"
+    }
+  ],
+  "edges": [
+    { "from": "management-services", "to": "integration-services", "style": "solid" },
+    { "from": "integration-services", "to": "management-services", "style": "solid" },
+    { "from": "user-support", "to": "te-services-main", "style": "solid" },
+    { "from": "te-services-main", "to": "enabling-services", "style": "solid" },
+    { "from": "enabling-services", "to": "innovation-services", "style": "solid" }
+  ]
+}
