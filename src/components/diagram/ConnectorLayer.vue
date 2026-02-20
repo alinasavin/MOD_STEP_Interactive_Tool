@@ -82,13 +82,27 @@ const getPath = (edge: Edge) => {
     }
 
     if (edge.routing === 'orthogonal') {
-      // Create a Z-shape or L-shape
       const dx = end.x - start.x;
       const dy = end.y - start.y;
 
+      if (edge.sourceAnchor === 'bottom' && edge.targetAnchor === 'bottom') {
+        // U-shape around the bottom
+        const maxY = Math.max(start.y, end.y) + 40;
+        return `M ${start.x} ${start.y} L ${start.x} ${maxY} L ${end.x} ${maxY} L ${end.x} ${end.y}`;
+      }
+
       if (edge.sourceAnchor === 'bottom' && edge.targetAnchor === 'right') {
-         // Special case for Innovation -> Enabling/TE
          return `M ${start.x} ${start.y} L ${start.x} ${end.y} L ${end.x} ${end.y}`;
+      }
+
+      if (edge.sourceAnchor === 'right' && edge.targetAnchor === 'top') {
+         return `M ${start.x} ${start.y} L ${end.x} ${start.y} L ${end.x} ${end.y}`;
+      }
+
+      if ((edge.sourceAnchor === 'left' || edge.sourceAnchor === 'right') &&
+          (edge.targetAnchor === 'left' || edge.targetAnchor === 'right')) {
+        const midX = (start.x + end.x) / 2;
+        return `M ${start.x} ${start.y} L ${midX} ${start.y} L ${midX} ${end.y} L ${end.x} ${end.y}`;
       }
 
       const midY = (start.y + end.y) / 2;
@@ -96,9 +110,17 @@ const getPath = (edge: Edge) => {
     }
 
     // Default to Bezier but with precision anchors
-    const hTension = Math.min(100, Math.abs(end.x - start.x) * 0.5);
     const dx = end.x - start.x;
-    return `M ${start.x} ${start.y} C ${start.x + hTension * Math.sign(dx)} ${start.y}, ${end.x - hTension * Math.sign(dx)} ${end.y}, ${end.x} ${end.y}`;
+    const dy = end.y - start.y;
+    if (Math.abs(dy) > Math.abs(dx)) {
+      // Vertical Bezier
+      const vTension = Math.min(100, Math.abs(dy) * 0.5);
+      return `M ${start.x} ${start.y} C ${start.x} ${start.y + vTension * Math.sign(dy)}, ${end.x} ${end.y - vTension * Math.sign(dy)}, ${end.x} ${end.y}`;
+    } else {
+      // Horizontal Bezier
+      const hTension = Math.min(100, Math.abs(dx) * 0.5);
+      return `M ${start.x} ${start.y} C ${start.x + hTension * Math.sign(dx)} ${start.y}, ${end.x - hTension * Math.sign(dx)} ${end.y}, ${end.x} ${end.y}`;
+    }
   }
 
   // ORIGINAL LOGIC for backward compatibility

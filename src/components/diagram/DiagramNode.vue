@@ -63,7 +63,8 @@ const handleInteraction = (isStarting: boolean) => {
           borderColor: isActive ? 'var(--accent-color)' : '',
           color: isActive ? 'var(--accent-color)' : '',
           boxShadow: isActive ? `0 10px 15px -3px var(--accent-glow)` : '',
-          backgroundColor: isActive ? 'var(--accent-bg)' : ''
+          backgroundColor: isActive ? 'var(--accent-bg)' : '',
+          minHeight: node.manualHeight ? `${node.manualHeight}px` : ''
         }"
         :class="[colorClasses, isActive ? 'animate-node-in' : '']"
     >
