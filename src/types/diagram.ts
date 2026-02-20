@@ -22,6 +22,7 @@ export interface DiagramNode {
   variant?: 'box' | 'text';
   manualX?: number;
   manualY?: number;
+  manualHeight?: number;
 }
 
 export interface Edge {

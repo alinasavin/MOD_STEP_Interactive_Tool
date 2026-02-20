@@ -15,6 +15,7 @@ const getStepTreeHeight = (step: DiagramStep): number => {
 };
 
 export const getNodeVisualHeight = (node: DiagramNode): number => {
+  if (node.manualHeight !== undefined) return node.manualHeight;
   const mainH = (node.steps || []).reduce((acc, s) => acc + getStepTreeHeight(s), 0);
   const parallelH = (node.parallelSteps || []).reduce((acc, s) => acc + getStepTreeHeight(s), 0);
   // Base 120 (header + padding) + tallest column
