@@ -6,7 +6,7 @@ const props = defineProps<{
   step: DiagramStep;
   isActive: boolean;
   depth?: number;
-  hoveredId: string | null; // Track which ID is globally hovered in this node
+  hoveredId: string | null;
 }>();
 
 const emit = defineEmits<{
@@ -15,19 +15,25 @@ const emit = defineEmits<{
 
 const getStepColorClasses = (color?: string) => `accent-${color || 'white'}`;
 
-const handleMouseEnter = (e: MouseEvent) => {
-  e.stopPropagation();
+const handleInteraction = (e: Event, isStarting: boolean) => {
+  e.stopPropagation(); // Prevents parent nodes/steps from showing their tooltips
   if (props.isActive) {
-    emit('updateHover', props.step.id);
+    emit('updateHover', isStarting ? props.step.id : null);
   }
 };
 </script>
 
 <template>
   <div
-      @mouseenter="handleMouseEnter"
-      @mouseleave="emit('updateHover', null)"
-      class="relative group/step w-full"
+      class="relative group/step w-full outline-none"
+      tabindex="0"
+      role="button"
+      :aria-label="`Step: ${step.label}. ${step.description}`"
+      :aria-describedby="isActive && hoveredId === step.id ? `tooltip-${step.id}` : undefined"
+      @mouseenter="handleInteraction($event, true)"
+      @mouseleave="handleInteraction($event, false)"
+      @focusin="handleInteraction($event, true)"
+      @focusout="handleInteraction($event, false)"
   >
     <div
         class="border-2 rounded-xl transition-all duration-500 flex flex-col gap-3"
@@ -37,7 +43,10 @@ const handleMouseEnter = (e: MouseEvent) => {
         backgroundColor: isActive ? 'var(--accent-bg)' : '',
         padding: (depth || 0) > 0 ? '0.5rem' : '0.75rem'
       }"
-        :class="[isActive ? getStepColorClasses(step.accentColor) : 'border-zinc-800 opacity-40']"
+        :class="[
+        isActive ? getStepColorClasses(step.accentColor) : 'border-zinc-800 opacity-40',
+        'focus-visible:ring-2 focus-visible:ring-white/30'
+      ]"
     >
       <div class="flex justify-between items-start gap-2">
         <div class="flex-1 min-w-0">
@@ -68,9 +77,9 @@ const handleMouseEnter = (e: MouseEvent) => {
         />
       </div>
 
-      <!-- ONLY show tooltip if this specific ID is the one being hovered -->
       <NodeTooltip
           v-if="isActive && hoveredId === step.id && step.tooltipDescription"
+          :id="`tooltip-${step.id}`"
           :text="step.tooltipDescription"
       />
     </div>
