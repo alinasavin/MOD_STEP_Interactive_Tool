@@ -19,7 +19,9 @@
       "description": "T&E Management Services",
       "accentColor": "green",
       "role": "top",
-      "width": 800,
+      "width": 1200,
+      "manualX": 250,
+      "manualY": -840,
       "iconKey": "analyst"
     },
     {
@@ -28,8 +30,8 @@
       "accentColor": "orange",
       "role": "top",
       "variant": "text",
-      "manualX": -200,
-      "manualY": -420
+      "manualX": -550,
+      "manualY": -840
     }
   ],
   "overviewNodes": [
@@ -38,8 +40,10 @@
       "description": "STEP Integration Services",
       "accentColor": "grey",
       "role": "overview",
-      "width": 800,
-      "iconKey": "services"
+      "width": 1200,
+      "iconKey": "services",
+      "manualX": 250,
+      "manualY": -700
     },
     {
       "id": "users-suppliers",
@@ -47,8 +51,8 @@
       "accentColor": "black",
       "role": "overview",
       "variant": "text",
-      "manualX": -200,
-      "manualY": 0
+      "manualX": -500,
+      "manualY": -300
     }
   ],
   "nodes": [
@@ -58,6 +62,8 @@
       "accentColor": "pink",
       "role": "entry",
       "iconKey": "user",
+      "manualX": -220,
+      "manualY": -300,
       "steps": [
         { "id": "user-support-1", "description": "T&E Marketplace", "accentColor": "pink" },
         { "id": "user-support-2", "description": "T&E Knowledge Hub", "accentColor": "pink" },
@@ -71,7 +77,9 @@
       "accentColor": "blue",
       "role": "step",
       "iconKey": "services",
-      "width": 600,
+      "width": 500,
+      "manualX": 250,
+      "manualY": -300,
       "steps": [
         { "id": "sf1", "label": "STEP-FUNDED T&E SERVICES", "description": "Govt Owned Contractor Operated (GOCO) Services" },
         { "id": "sf2", "description": "Contractor Owned Contractor Operated (COCO) Services" },
@@ -90,6 +98,8 @@
       "accentColor": "orange",
       "role": "step",
       "iconKey": "provider",
+      "manualX": 700,
+      "manualY": -300,
       "steps": [
         { "id": "e1", "description": "High Performance Computing Services" },
         { "id": "e2", "description": "SofS Federation Services" },
@@ -103,9 +113,8 @@
       "accentColor": "purple",
       "role": "end",
       "iconKey": "innovation",
-      "width": 150,
-      "manualX": 1000,
-      "manualY": -300
+      "manualY": -840,
+      "manualX": 1100
     }
   ],
   "edges": [
@@ -116,12 +125,12 @@
     { "from": "integration-services", "to": "user-support", "sourceAnchor": "bottom", "targetAnchor": "top", "routing": "straight", "color": "grey", "showArrow": true },
     { "from": "integration-services", "to": "te-services-main", "sourceAnchor": "bottom", "targetAnchor": "top", "routing": "straight", "color": "grey", "showArrow": true },
     { "from": "integration-services", "to": "enabling-services", "sourceAnchor": "bottom", "targetAnchor": "top", "routing": "straight", "color": "grey", "showArrow": true },
+    { "from": "enabling-services", "to": "integration-services", "sourceAnchor": "top", "targetAnchor": "bottom", "routing": "straight", "color": "orange", "showArrow": true },
     { "from": "users-suppliers", "to": "user-support", "sourceAnchor": "right", "targetAnchor": "left", "routing": "straight", "color": "black", "showArrow": true },
     { "from": "user-support", "to": "integration-services", "sourceAnchor": "top", "targetAnchor": "bottom", "routing": "straight", "color": "pink", "showArrow": true },
     { "from": "te-services-main", "to": "integration-services", "sourceAnchor": "top", "targetAnchor": "bottom", "routing": "straight", "color": "blue", "showArrow": true },
-    { "from": "enabling-services", "to": "integration-services", "sourceAnchor": "top", "targetAnchor": "bottom", "routing": "straight", "color": "orange", "showArrow": true },
-    { "from": "innovation-services", "to": "integration-services", "sourceAnchor": "left", "targetAnchor": "right", "routing": "straight", "color": "purple", "showArrow": true },
+    { "from": "innovation-services", "to": "integration-services", "sourceAnchor": "bottom", "targetAnchor": "right", "routing": "straight", "color": "purple", "showArrow": true },
     { "from": "innovation-services", "to": "enabling-services", "sourceAnchor": "bottom", "targetAnchor": "right", "routing": "orthogonal", "color": "purple", "showArrow": true },
-    { "from": "innovation-services", "to": "te-services-main", "sourceAnchor": "bottom", "targetAnchor": "right", "routing": "orthogonal", "color": "purple", "showArrow": true }
+    { "from": "innovation-services", "to": "te-services-main", "sourceAnchor": "bottom", "targetAnchor": "top", "routing": "orthogonal", "color": "purple", "showArrow": true }
   ]
 }

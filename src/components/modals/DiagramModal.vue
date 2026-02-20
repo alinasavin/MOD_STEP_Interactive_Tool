@@ -33,7 +33,7 @@ const allActiveIds = computed(() => {
         @click="close"
     >
       <div
-          class="relative w-full max-w-[1800px]  rounded-[3rem] md:rounded-[4rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-500"
+          class="relative w-full   rounded-[3rem] md:rounded-[4rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-500"
           @click.stop
       >
         <!-- Floating Close Button: z-index 110 to stay above everything -->
