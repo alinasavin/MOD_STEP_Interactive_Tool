@@ -19,6 +19,10 @@ export interface DiagramNode {
   accentColor?: string;
   tooltipDescription?: string;
   width?: number;
+  variant?: 'box' | 'text';
+  manualX?: number;
+  manualY?: number;
+  manualHeight?: number;
 }
 
 export interface Edge {
@@ -26,6 +30,10 @@ export interface Edge {
   to: string;
   style?: 'solid' | 'dotted' | 'dashed';
   color?: string;
+  routing?: 'bezier' | 'orthogonal' | 'straight';
+  sourceAnchor?: 'top' | 'bottom' | 'left' | 'right';
+  targetAnchor?: 'top' | 'bottom' | 'left' | 'right';
+  showArrow?: boolean;
 }
 
 export interface LayoutOptions {

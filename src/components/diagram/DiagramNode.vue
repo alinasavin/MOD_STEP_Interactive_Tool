@@ -50,13 +50,21 @@ const handleInteraction = (isStarting: boolean) => {
       }"
       :class="[isActive ? 'opacity-100 scale-100' : 'opacity-0 scale-90 pointer-events-none']"
   >
+    <template v-if="node.variant === 'text'">
+      <div class="text-left py-2 px-4">
+        <div v-if="node.label" class="text-[11px] font-black uppercase tracking-[0.2em] mb-1" :style="{ color: 'var(--node-accent)' }">{{ node.label }}</div>
+        <p v-if="node.description" class="text-[11px] font-black uppercase tracking-[0.2em] text-zinc-900 dark:text-zinc-100 leading-tight mb-0">{{ node.description }}</p>
+      </div>
+    </template>
     <div
+        v-else
         class="w-full p-5 bg-zinc-950/90 backdrop-blur-md border-2 rounded-4xl text-left relative transition-all duration-500 shadow-2xl"
         :style="{
           borderColor: isActive ? 'var(--accent-color)' : '',
           color: isActive ? 'var(--accent-color)' : '',
           boxShadow: isActive ? `0 10px 15px -3px var(--accent-glow)` : '',
-          backgroundColor: isActive ? 'var(--accent-bg)' : ''
+          backgroundColor: isActive ? 'var(--accent-bg)' : '',
+          minHeight: node.manualHeight ? `${node.manualHeight}px` : ''
         }"
         :class="[colorClasses, isActive ? 'animate-node-in' : '']"
     >
