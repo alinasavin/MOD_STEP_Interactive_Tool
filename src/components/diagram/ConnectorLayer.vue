@@ -41,10 +41,10 @@ const getAnchorPoint = (nodeId: string, anchor: 'top' | 'bottom' | 'left' | 'rig
   const pos = getPos(nodeId);
   if (!node || !pos) return { x: 0, y: 0 };
 
-  const w = node.width || DEFAULT_NODE_WIDTH;
+  const w = node.width || (node.variant === 'text' ? 320 : DEFAULT_NODE_WIDTH);
   const h = node.variant === 'text' ? 40 : getNodeVisualHeight(node);
   const r = node.variant === 'text' ? 0 : 32; // corner radius
-  const outset = 2; // Small outset to avoid overlap with node border
+  const outset = 4; // Increased outset for arrow precision
 
   if (!anchor) {
     const dx = otherPos.x - pos.x;
@@ -115,10 +115,14 @@ const getPath = (edge: Edge) => {
   // Use new precision logic if routing or anchors are specified
   if (edge.routing || edge.sourceAnchor || edge.targetAnchor) {
     const start = getAnchorPoint(edge.from, edge.sourceAnchor, toPos, offset);
-    const end = getAnchorPoint(edge.to, edge.targetAnchor, fromPos, -offset);
+    const end = getAnchorPoint(edge.to, edge.targetAnchor, fromPos, offset);
 
     if (edge.routing === 'straight') {
-      return `M ${start.x} ${start.y} L ${end.x} ${end.y}`;
+      // Add a minute offset to perfectly horizontal/vertical lines to prevent clipping bugs at certain scales
+      const isHorizontal = Math.abs(start.y - end.y) < 0.1;
+      const isVertical = Math.abs(start.x - end.x) < 0.1;
+      const fudge = 0.01;
+      return `M ${start.x} ${start.y} L ${end.x + (isHorizontal ? 0 : 0)} ${end.y + (isHorizontal ? fudge : 0)}`;
     }
 
     if (edge.routing === 'orthogonal') {
