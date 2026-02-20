@@ -2,7 +2,7 @@
   {
     "id": "te-user",
     "title": "T&E User",
-    "description": "I want to test a capability.",
+    "description": "Select a use case to see STEP process details",
     "longDescription": "Access User Support Services to define your testing requirements, browse the T&E Portfolio for existing solutions, and utilise Common Enablers to accelerate your project.",
     "ctaLabel": "Select Profile",
     "iconKey": "user",
@@ -31,7 +31,7 @@
   {
     "id": "te-service-provider",
     "title": "T&E Service Provider",
-    "description": "I want to offer tests to the market.",
+    "description": "Select a use case to see STEP process details",
     "longDescription": "Join the T&E Services marketplace. Standardise your offerings, connect with users through User Support Services, and contribute to the overall T&E Portfolio.",
     "ctaLabel": "Select Profile",
     "iconKey": "provider",
@@ -54,7 +54,7 @@
   {
     "id": "management-services",
     "title": "Management Services",
-    "description": "Manage the T&E service portfolio.",
+    "description": "Select a use case to see STEP process details",
     "longDescription": "Analyse data from User Support Services to identify capability gaps, direct research investments, and manage the overall health of the T&E service portfolio to evolve the STEP Process.",
     "ctaLabel": "Select Profile",
     "iconKey": "analyst",

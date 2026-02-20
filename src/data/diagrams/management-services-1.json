@@ -9,7 +9,7 @@
     "canvasHeight": 600
   },
   "entryNodeId": "user-entry",
-  "instruction": "HOVER ON EACH NODE TO LEARN MORE",
+  "instruction": "HOVER ON EACH STEP TO LEARN MORE",
   "activationMode": "reachable",
   "nodes": [
     {
@@ -19,26 +19,40 @@
       "iconKey": "user",
       "role": "entry",
       "accentColor": "green",
+      "tooltipDescription": "Ensures Defence T&E is performing as expected and continues to meet Defence’s evolving needs by managing & influencing T&E Defence-wide.",
       "steps": [
         {
-          "id": "analyze",
-          "description": "Analyze",
-          "accentColor": "green"
-        },
-        {
-          "id": "enabling-services",
-          "description": "Enabling Services",
-          "accentColor": "orange"
-        },
-        {
-          "id": "te-services",
-          "description": "T&E Services",
-          "accentColor": "blue"
-        },
-        {
-          "id": "support-services",
-          "description": "User Support Services",
-          "accentColor": "pink"
+          "id": "integration-services",
+          "description": "Integration Services",
+          "accentColor": "grey",
+          "tooltipDescription": "Provides common enablers of T&E, where necessary to deliver the Portfolio’s mission. Accessible to all service providers within the marketplace to meet the needs of the User.",
+          "subSteps": [
+            {
+              "id": "market-analysis",
+              "description": "Market Analysis",
+              "accentColor": "grey",
+              "tooltipDescription": "Helps users understand T&E and find and engage the best services for their needs, and MOD to understand market health.",
+              "subSteps": [
+                {
+                  "id": "enabling-services",
+                  "description": "Enabling Services",
+                  "accentColor": "orange"
+                },
+                {
+                  "id": "te-services",
+                  "description": "T&E Services",
+                  "accentColor": "blue",
+                  "tooltipDescription": "A combination of STEP-Funded T&E Services (Critical MOD owned or retained T&E capabilities, assets and services) and Other T&E Services (UK and international network of services, facilities and ranges available for T&E)"
+                },
+                {
+                  "id": "support-services",
+                  "description": "User Support Services",
+                  "accentColor": "pink"
+                }
+              ]
+            }
+
+          ]
         }
       ]
     },
@@ -47,7 +61,7 @@
       "label": "Investment Pot",
       "iconKey": "guidance",
       "role": "step",
-      "accentColor": "purple"
+      "accentColor": "grey"
     },
     {
       "id": "te-services",
@@ -61,7 +75,8 @@
       "label": "Innovation Services",
       "iconKey": "services",
       "role": "step",
-      "accentColor": "purple"
+      "accentColor": "purple",
+      "tooltipDescription": "Accelerates and optimises UK T&E R&D investment and de-risks STEP investment."
     }
   ],
   "edges": [

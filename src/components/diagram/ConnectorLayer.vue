@@ -41,6 +41,7 @@ const getPath = (edge: Edge) => {
   const dx = toPos.x - fromPos.x;
   const dy = toPos.y - fromPos.y;
 
+  // Detect layer jump
   const isLayerConnection = fromNode?.role === 'overview' || fromNode?.role === 'top' ||
       toNode?.role === 'overview' || toNode?.role === 'top';
 
@@ -53,44 +54,38 @@ const getPath = (edge: Edge) => {
     const eX = toPos.x;
     const eY = dy > 0 ? toPos.y - toH : toPos.y + toH;
 
-    const vTension = Math.abs(dy) * 0.4;
-    const isPerfectlyVertical = Math.abs(dx) < 1;
-    const cp1x = isPerfectlyVertical ? sX + 1 : sX;
-    const cp2x = isPerfectlyVertical ? eX - 1 : eX;
+    const vTension = Math.abs(dy) * 0.5;
+    const isVertical = Math.abs(dx) < 1;
+    const cp1x = isVertical ? sX + 1 : sX;
+    const cp2x = isVertical ? eX - 1 : eX;
     const cp1y = dy > 0 ? sY + vTension : sY - vTension;
     const cp2y = dy > 0 ? eY - vTension : eY + vTension;
 
     return `M ${sX} ${sY} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${eX} ${eY}`;
   }
   else {
-    // STANDARD FLOW & TREE (Horizontal)
+    // Standard Horizontal Flow (Includes Trees)
     const dir = Math.sign(dx) || 1;
+
+    // USES ACTUAL NODE WIDTHS FROM DATA
     const fromW = fromNode?.width || DEFAULT_NODE_WIDTH;
     const toW = toNode?.width || DEFAULT_NODE_WIDTH;
 
-    // Start/End points exactly on node borders
     const sX = fromPos.x + (fromW / 2 * dir);
     const sY = fromPos.y;
     const eX = toPos.x - (toW / 2 * dir);
     const eY = toPos.y;
 
-    /**
-     * BALANCED SHOULDER LOGIC
-     * We force the line to leave the node horizontally and enter horizontally.
-     * This stops the line from cutting across rounded corners.
-     */
+    // Calculate dynamic shoulder to prevent corner clipping
     const gapX = Math.abs(eX - sX);
-    const shoulderLength = Math.min(30, gapX * 0.4);
+    const shoulder = Math.min(30, gapX * 0.4);
 
-    const cp1x = sX + (shoulderLength * dir);
-    const cp1y = sY; // Match start Y for perfectly flat exit
-    const cp2x = eX - (shoulderLength * dir);
-    const cp2y = eY; // Match end Y for perfectly flat entry
+    const cp1x = sX + (shoulder * dir);
+    const cp2x = eX - (shoulder * dir);
 
-    // 1px bulge fix solely for the 'glow' filter bounding box
     const isHorizontal = Math.abs(dy) < 1;
-    const ctrlY1 = isHorizontal ? sY - 1 : cp1y;
-    const ctrlY2 = isHorizontal ? eY + 1 : cp2y;
+    const ctrlY1 = isHorizontal ? sY - 1 : sY;
+    const ctrlY2 = isHorizontal ? eY + 1 : eY;
 
     return `M ${sX} ${sY} C ${cp1x} ${ctrlY1}, ${cp2x} ${ctrlY2}, ${eX} ${eY}`;
   }

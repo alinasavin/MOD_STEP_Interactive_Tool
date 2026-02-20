@@ -3,13 +3,13 @@
   "layout": "hybrid",
   "layoutOptions": {
     "columnGap": 120,
-    "rowGap": 150,
+    "rowGap": 200,
     "paddingX": 100,
     "paddingY": 100,
-    "canvasHeight": 600
+    "canvasHeight": 800
   },
   "entryNodeId": "user-entry",
-  "instruction": "HOVER ON EACH NODE TO LEARN MORE",
+  "instruction": "HOVER ON EACH STEP TO LEARN MORE",
   "activationMode": "reachable",
   "nodes": [
     {
@@ -18,35 +18,53 @@
       "description": "Urgent Operational Requirement",
       "iconKey": "user",
       "role": "entry",
-      "accentColor": "blue"
+      "accentColor": "grey"
     },
     {
       "id": "user-support-services",
       "label": "User Support Services",
       "iconKey": "guidance",
       "role": "step",
-      "accentColor": "pink"
+      "accentColor": "pink",
+      "tooltipDescription": "Helps users understand T&E and find and engage the best services for their needs, and MOD to understand market health."
     },
     {
       "id": "integration-services-1",
       "label": "Integration Services",
       "iconKey": "services",
       "role": "step",
-      "accentColor": "green"
+      "accentColor": "grey",
+      "tooltipDescription": "Custodian of user experience, assuring technical quality and seamless interaction of individual services."
     },
     {
       "id": "management-services",
       "label": "Management Services",
       "iconKey": "services",
       "role": "step",
-      "accentColor": "green"
+      "accentColor": "green",
+      "tooltipDescription": "Ensures Defence T&E is performing as expected and continues to meet Defence’s evolving needs by managing & influencing T&E Defence-wide."
+    },
+    {
+      "id": "long-term-success",
+      "label": "Long Term Success",
+      "iconKey": "services",
+      "role": "step",
+      "accentColor": "white",
+      "steps": [
+        {
+          "id": "innovation-services",
+          "description": "Innovation Services",
+          "accentColor": "purple",
+          "tooltipDescription": "Accelerates and optimises UK T&E R&D investment and de-risks STEP investment."
+        }
+      ]
     },
     {
       "id": "integration-services-2",
       "label": "Integration Services",
       "iconKey": "services",
       "role": "step",
-      "accentColor": "green"
+      "accentColor": "grey"
     },
     {
       "id": "te-services",
@@ -54,39 +72,56 @@
       "iconKey": "services",
       "role": "step",
       "accentColor": "blue",
+      "tooltipDescription": "Provides common enablers of T&E, where necessary to deliver the Portfolio’s mission. Accessible to all service providers within the marketplace to meet the needs of the User.",
       "steps": [
         {
-          "id": "enabling-services",
+          "id": "enabling-services-1",
+          "description": "Enabling Services",
+          "accentColor": "orange"
+        },
+        {
+          "id": "enabling-services-2",
+          "description": "Enabling Services",
+          "accentColor": "orange"
+        },
+        {
+          "id": "enabling-services-3",
           "description": "Enabling Services",
           "accentColor": "orange"
         }
       ]
     },
     {
-      "id": "international-service",
-      "label": "T&E Service",
-      "iconKey": "services",
-      "description": "International Service",
-      "role": "step",
-      "accentColor": "blue",
-      "tooltipDescription": "Short Term Success"
-    },
-    {
-      "id": "innovation-services",
-      "label": "Innovation Services",
+      "id": "short-term-success",
+      "label": "Short Term Success",
       "iconKey": "services",
       "role": "step",
-      "accentColor": "purple",
-      "tooltipDescription": "Long Term Success"
+      "accentColor": "white",
+      "steps": [
+        {
+          "id": "te-service-1",
+          "description": "T&E Service",
+          "accentColor": "blue",
+          "tooltipDescription": "A combination of STEP-Funded T&E Services (Critical MOD owned or retained T&E capabilities, assets and services) and Other T&E Services (UK and international network of services, facilities and ranges available for T&E)",
+          "subSteps": [
+            {
+              "id": "international-service",
+              "description": "International Service",
+              "accentColor": "blue",
+              "tooltipDescription": "Overseas government‑owned ranges and test services, including modelling and simulation (M&S), for which the MOD already has established access agreements, as well as contractor‑owned overseas ranges and test services (including M&S), are made available for use by the wider marketplace."
+            }
+          ]
+        }
+      ]
     }
   ],
   "edges": [
     { "from": "user-entry", "to": "user-support-services", "style": "dashed"},
     { "from": "user-support-services", "to": "integration-services-1", "style": "dotted" },
     { "from": "integration-services-1", "to": "management-services", "style": "dotted" },
+    { "from": "management-services", "to": "long-term-success", "style": "dashed"},
     { "from": "management-services", "to": "integration-services-2", "style": "dashed"},
-    { "from": "management-services", "to": "innovation-services", "style": "dashed"},
     { "from": "integration-services-2", "to": "te-services", "style": "dotted" },
-    { "from": "integration-services-2", "to": "international-service", "style": "dotted" }
+    { "from": "integration-services-2", "to": "short-term-success", "style": "dotted" }
   ]
 }

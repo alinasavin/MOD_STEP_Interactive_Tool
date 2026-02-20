@@ -9,7 +9,7 @@
     "canvasHeight": 600
   },
   "entryNodeId": "user-entry",
-  "instruction": "HOVER ON EACH NODE TO LEARN MORE",
+  "instruction": "HOVER ON EACH STEP TO LEARN MORE",
   "activationMode": "reachable",
   "nodes": [
     {
@@ -18,36 +18,63 @@
       "description": "Management Services",
       "iconKey": "user",
       "role": "entry",
+      "width": 400,
       "accentColor": "green",
+      "tooltipDescription": "Ensures Defence T&E is performing as expected and continues to meet Defence’s evolving needs by managing & influencing T&E Defence-wide.",
       "steps": [
         {
-          "id": "analyze",
-          "description": "Analyze",
-          "accentColor": "green"
-        },
+          "id": "integration-services",
+          "description": "Integration Services",
+          "accentColor": "grey",
+          "tooltipDescription": "Custodian of user experience, assuring technical quality and seamless interaction of individual services.",
+          "subSteps": [
+            {
+              "id": "market-analysis",
+              "description": "Market Analysis",
+              "accentColor": "white",
+              "tooltipDescription": "Provide T&E Portfolio management with high quality market health data to support Portfolio Development and Delivery",
+              "subSteps": [
+                {
+                  "id": "enabling-services-1",
+                  "description": "Enabling Services",
+                  "accentColor": "orange",
+                  "tooltipDescription": "Provides common enablers of T&E, where necessary to deliver the Portfolio’s mission. Accessible to all service providers within the marketplace to meet the needs of the User."
+                },
+                {
+                  "id": "te-services",
+                  "description": "T&E Services",
+                  "accentColor": "blue",
+                  "tooltipDescription": "A combination of STEP-Funded T&E Services (Critical MOD owned or retained T&E capabilities, assets and services) and Other T&E Services (UK and international network of services, facilities and ranges available for T&E)"
+                },
+                {
+                  "id": "support-services",
+                  "description": "User Support Services",
+                  "accentColor": "pink",
+                  "tooltipDescription": "Helps users understand T&E and find and engage the best services for their needs, and MOD to understand market health."
+                }
+              ]
+            }
+          ]
+        }
+
+      ],
+      "parallelSteps": [
         {
-          "id": "enabling-services",
-          "description": "Enabling Services",
-          "accentColor": "orange"
-        },
-        {
-          "id": "te-services",
-          "description": "T&E Services",
-          "accentColor": "blue"
-        },
-        {
-          "id": "support-services",
-          "description": "User Support Services",
-          "accentColor": "pink"
+          "id": "innovation-services-internal",
+          "label": "Innovation Services",
+          "iconKey": "guidance",
+          "role": "step",
+          "accentColor": "purple",
+          "tooltipDescription": "Innovation Services will possess the capability to perform horizon scans, assessing both peer and adversary capabilities.",
+          "subSteps": [
+            {
+              "id": "horizon-scan",
+              "description": "Horizon Scan",
+              "accentColor": "grey"
+            }
+          ]
         }
       ]
-    },
-    {
-      "id": "horizon-scan",
-      "label": "Horizon Scan",
-      "iconKey": "guidance",
-      "role": "step",
-      "accentColor": "green"
     },
     {
       "id": "problem-statement",
@@ -61,27 +88,35 @@
       "label": "Innovation Services",
       "iconKey": "services",
       "role": "step",
-      "accentColor": "purple"
+      "accentColor": "purple",
+      "tooltipDescription": "Accelerates and optimises UK T&E R&D investment and de-risks STEP investment."
     },
     {
-      "id": "te-services",
-      "label": "T&E SERVICE",
-      "iconKey": "services",
-      "role": "step",
-      "accentColor": "blue",
+      "id": "successful-innovation",
+      "label": "Successful Innovation",
+      "iconKey": "check",
+      "role": "end",
+      "accentColor": "grey",
       "steps": [
         {
-          "id": "market-place",
-          "description": "Market Place",
-          "accentColor": "pink"
+          "id": "te-services",
+          "description": "T&E Services",
+          "iconKey": "services",
+          "accentColor": "blue",
+          "subSteps": [
+            {
+              "id": "market-place",
+              "description": "Market Place",
+              "accentColor": "pink"
+            }
+          ]
         }
       ]
     }
   ],
   "edges": [
-    { "from": "user-entry", "to": "horizon-scan", "style": "dashed"},
-    { "from": "horizon-scan", "to": "problem-statement", "style": "dotted" },
+    { "from": "user-entry", "to": "problem-statement", "style": "dashed"},
     { "from": "problem-statement", "to": "innovation-services", "style": "dotted" },
-    { "from": "innovation-services", "to": "te-services", "style": "dotted" }
+    { "from": "innovation-services", "to": "successful-innovation", "style": "dotted" }
   ]
 }

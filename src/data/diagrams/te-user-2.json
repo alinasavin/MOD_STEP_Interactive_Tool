@@ -11,7 +11,7 @@
     "topGap": 100
   },
   "entryNodeId": "user-entry",
-  "instruction": "HOVER ON EACH NODE TO LEARN MORE",
+  "instruction": "HOVER ON EACH STEP TO LEARN MORE",
   "activationMode": "reachable",
   "topNodes": [
     {

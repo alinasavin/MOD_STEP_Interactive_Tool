@@ -1,66 +1,77 @@
 <script setup lang="ts">
-import { ref } from 'vue';
 import type { DiagramStep } from '@/types/diagram.ts';
 import NodeTooltip from './NodeTooltip.vue';
 
 const props = defineProps<{
   step: DiagramStep;
   isActive: boolean;
+  depth?: number;
+  hoveredId: string | null; // Track which ID is globally hovered in this node
 }>();
 
-const isHovered = ref(false);
+const emit = defineEmits<{
+  (e: 'updateHover', id: string | null): void;
+}>();
 
 const getStepColorClasses = (color?: string) => `accent-${color || 'white'}`;
+
+const handleMouseEnter = (e: MouseEvent) => {
+  e.stopPropagation();
+  if (props.isActive) {
+    emit('updateHover', props.step.id);
+  }
+};
 </script>
 
 <template>
-  <div class="relative group/step">
-    <!--
-      The Step Box
-      @mouseenter.stop ensures that hovering a step doesn't
-      also trigger the main node's tooltip.
-    -->
+  <div
+      @mouseenter="handleMouseEnter"
+      @mouseleave="emit('updateHover', null)"
+      class="relative group/step w-full"
+  >
     <div
-        @mouseenter.stop="isHovered = true"
-        @mouseleave="isHovered = false"
-        class="p-3 border-2 rounded-2xl transition-all duration-500 cursor-help"
+        class="border-2 rounded-xl transition-all duration-500 flex flex-col gap-3"
         :style="{
         borderColor: isActive ? 'var(--accent-color)' : '',
         color: isActive ? 'var(--accent-color)' : '',
-        backgroundColor: isActive ? 'var(--accent-bg)' : ''
+        backgroundColor: isActive ? 'var(--accent-bg)' : '',
+        padding: (depth || 0) > 0 ? '0.5rem' : '0.75rem'
       }"
         :class="[isActive ? getStepColorClasses(step.accentColor) : 'border-zinc-800 opacity-40']"
     >
-      <!-- Info Icon (for main node) -->
-      <div v-if="step.tooltipDescription" class="absolute top-2 right-2 text-zinc-600 dark:text-zinc-400 opacity-60">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-      </div>
-      <div class="text-[8px] font-black uppercase tracking-[0.15em] mb-0.5">
-        {{ step.label }}
-      </div>
-      <div class="text-xs font-semibold text-white leading-tight">
-        {{ step.description }}
+      <div class="flex justify-between items-start gap-2">
+        <div class="flex-1 min-w-0">
+          <div class="text-[8px] font-black uppercase tracking-[0.15em] mb-0.5 opacity-80">
+            {{ step.label }}
+          </div>
+          <div class="text-xs font-semibold text-white leading-tight">
+            {{ step.description }}
+          </div>
+        </div>
+        <div v-if="step.tooltipDescription" class="shrink-0 opacity-40">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
       </div>
 
-      <!-- Tooltip only shows if this specific step is hovered -->
+      <!-- Recursive Sub-steps -->
+      <div v-if="step.subSteps && step.subSteps.length > 0" class="flex flex-col gap-2 pt-2 border-t border-white/10">
+        <StepItem
+            v-for="sub in step.subSteps"
+            :key="sub.id"
+            :step="sub"
+            :isActive="isActive"
+            :depth="(depth || 0) + 1"
+            :hoveredId="hoveredId"
+            @update-hover="(id) => emit('updateHover', id)"
+        />
+      </div>
+
+      <!-- ONLY show tooltip if this specific ID is the one being hovered -->
       <NodeTooltip
-          v-if="isActive && isHovered && step.tooltipDescription"
+          v-if="isActive && hoveredId === step.id && step.tooltipDescription"
           :text="step.tooltipDescription"
-      />
-    </div>
-
-    <!-- Recursive Sub-steps -->
-    <div
-        v-if="step.subSteps && step.subSteps.length > 0"
-        class="mt-2 ml-4 pl-3 border-l border-zinc-800 space-y-2"
-    >
-      <StepItem
-          v-for="sub in step.subSteps"
-          :key="sub.id"
-          :step="sub"
-          :isActive="isActive"
       />
     </div>
   </div>

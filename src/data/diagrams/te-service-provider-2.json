@@ -10,14 +10,16 @@
     "overviewGap": 250
   },
   "entryNodeId": "user-entry",
-  "instruction": "HOVER ON EACH NODE TO LEARN MORE",
+  "instruction": "HOVER ON EACH STEP TO LEARN MORE",
   "activationMode": "reachable",
   "overviewNodes": [
     {
       "id": "integration-services",
       "description": "Integration Services",
-      "accentColor": "purple",
-      "role": "overview"
+      "accentColor": "grey",
+      "role": "overview",
+      "width": 800,
+      "tooltipDescription": "A core responsibility of the Service Integrator will be receiving applications from User Support Services and validating applications before allowing User Support Services to grant them access to the Marketplace"
     }
   ],
   "nodes": [
@@ -27,7 +29,8 @@
       "description": "T&E SERVICE PROVIDER",
       "iconKey": "user",
       "role": "entry",
-      "accentColor": "blue"
+      "accentColor": "white",
+      "tooltipDescription": "T&E Users include Ministry of Defence (MOD) personnel from Front Line Commands, Defence Agencies, Defence Organisations, and approved defence contractors who have passed the required assurance checks by the Marketplace."
     },
     {
       "id": "user-support-services",
@@ -36,11 +39,13 @@
       "iconKey": "guidance",
       "role": "step",
       "accentColor": "pink",
+      "tooltipDescription": "Helps users understand T&E and find and engage the best services for their needs, and MOD to understand market health.",
       "steps": [
         {
           "id": "market-place",
           "description": "Market Place",
-          "accentColor": "pink"
+          "accentColor": "pink",
+          "tooltipDescription": "Provides T&E users and suppliers with a single integrated portal to access the market."
         }
       ]
     },
@@ -50,6 +55,7 @@
       "iconKey": "services",
       "role": "step",
       "accentColor": "blue",
+      "tooltipDescription": "A combination of STEP-Funded T&E Services (Critical MOD owned or retained T&E capabilities, assets and services) and Other T&E Services (UK and international network of services, facilities and ranges available for T&E)",
       "steps": [
         {
           "id": "service-capability",
@@ -71,24 +77,41 @@
       "accentColor": "blue",
       "steps": [
         {
-          "id": "enabling-service",
-          "description": "Enabling Services",
-          "accentColor": "orange"
-        }
-      ]
-    },
-    {
-      "id": "gap-enabling-services",
-      "label": "T&E SERVICE",
-      "iconKey": "services",
-      "role": "step",
-      "accentColor": "blue",
-      "steps": [
+          "id": "enabling-service-1",
+          "description": "High Performance Computing (HPC)",
+          "accentColor": "orange",
+          "tooltipDescription": "Provide the in-service framework, available to the marketplace, for access to HPC in defence T&E"
+        },
         {
-          "id": "enabling-service",
-          "label": "Enabling Service",
-          "description": "Gap in Enabling Service",
-          "accentColor": "pink"
+          "id": "enabling-service-2",
+          "description": "System of System Federations (SoSF)",
+          "accentColor": "orange",
+          "tooltipDescription": "Provide a range of System of System Federations to de-risk introducing new capabilities into existing force structures"
+        },
+        {
+          "id": "enabling-service-3",
+          "description": "T&E Data Services",
+          "accentColor": "orange",
+          "tooltipDescription": "Provides access to T&E data at the speed of relevance by providing high quality communications, data repositories and configuration standards."
+        },
+        {
+          "id": "enabling-service-4",
+          "description": "Deployable T&E",
+          "accentColor": "orange",
+          "tooltipDescription": "Delivers efficiency in conduct of deployed T&E by providing common deployable T&E assets (e.g. Targetry, instrumentation) when demand is sufficient"
+        },
+        {
+          "id": "enabling-service-5",
+          "description": "Enabling Services",
+          "accentColor": "grey",
+          "subSteps": [
+            {
+              "id": "enabling-service-5-1",
+              "description": "Gap in Enabling Service",
+              "accentColor": "grey",
+              "tooltipDescription": "Integration Services monitor gaps in enabling services. When demand exceeds capacity or becomes urgent, the issue is escalated to Innovation Services for resolution."
+            }
+          ]
         }
       ]
     },
@@ -96,26 +119,24 @@
       "id": "innovation-services",
       "label": "Innovation Services",
       "iconKey": "portfolio",
-      "role": "step",
-      "accentColor": "purple"
+      "role": "end",
+      "accentColor": "purple",
+      "tooltipDescription": "Accelerates and optimises UK T&E R&D investment and de-risks STEP investment"
     },
     {
       "id": "proposal-offer",
       "label": "Provider Proposals",
       "description": "Provider proposals offered to T&E Demand",
       "iconKey": "portfolio",
-      "role": "step",
-      "accentColor": "purple"
+      "role": "end",
+      "accentColor": "grey"
     }
   ],
   "edges": [
     { "from": "user-entry", "to": "user-support-services", "style": "dashed"},
     { "from": "user-support-services", "to": "te-services", "style": "dotted" },
     { "from": "te-services", "to": "enabling-services", "style": "dotted" },
-    { "from": "te-services", "to": "gap-enabling-services", "style": "dotted" },
-    { "from": "enabling-services", "to": "proposal-offer", "style": "dotted",
-      "color": "green"
-    },
-    { "from": "gap-enabling-services", "to": "innovation-services", "style": "dotted"}
+    { "from": "enabling-services", "to": "proposal-offer", "style": "dotted"},
+    { "from": "enabling-services", "to": "innovation-services", "style": "dotted"}
   ]
 }
