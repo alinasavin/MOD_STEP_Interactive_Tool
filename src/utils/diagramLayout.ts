@@ -7,9 +7,11 @@ export interface NodePosition {
 }
 
 const getStepTreeHeight = (step: DiagramStep): number => {
-  let h = 45;
+  // Each step is roughly 50px tall plus some gap
+  let h = 60;
   if (step.subSteps && step.subSteps.length > 0) {
     step.subSteps.forEach((s) => { h += getStepTreeHeight(s); });
+    h += 10; // Extra padding for sub-step container
   }
   return h;
 };
@@ -17,8 +19,13 @@ const getStepTreeHeight = (step: DiagramStep): number => {
 export const getNodeVisualHeight = (node: DiagramNode): number => {
   const mainH = (node.steps || []).reduce((acc, s) => acc + getStepTreeHeight(s), 0);
   const parallelH = (node.parallelSteps || []).reduce((acc, s) => acc + getStepTreeHeight(s), 0);
-  // Base 120 (header + padding) + tallest column
-  return 120 + Math.max(mainH, parallelH);
+
+  // If no steps, base height is around 100px.
+  // If steps exist, we add header (80px) + padding/gaps.
+  const hasSteps = (node.steps?.length || 0) > 0 || (node.parallelSteps?.length || 0) > 0;
+  const baseHeight = hasSteps ? 130 : 100;
+
+  return baseHeight + Math.max(mainH, parallelH);
 };
 
 export function calculateNodePositions(

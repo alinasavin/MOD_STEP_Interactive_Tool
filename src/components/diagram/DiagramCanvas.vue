@@ -56,7 +56,7 @@ const diagramLayout = computed(() => {
   if (raw.length === 0) return { positions: [], width: 0, height: 0 };
 
   const pX = layoutOptions.value.paddingX ?? 100;
-  const pY = 40;
+  const pY = 100;
 
   const minX = Math.min(...raw.map(p => p.x));
   const maxX = Math.max(...raw.map(p => p.x));

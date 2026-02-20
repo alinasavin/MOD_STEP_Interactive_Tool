@@ -31,9 +31,12 @@ const getNodeHeightOriginal = (node?: Node) => {
   return hasSteps ? STEP_NODE_HEIGHT : BASE_NODE_HEIGHT;
 };
 
-const clamp = (val: number, min: number, max: number) => Math.min(Math.max(val, min), max);
+const clamp = (val: number, min: number, max: number) => {
+  if (min > max) return (min + max) / 2;
+  return Math.min(Math.max(val, min), max);
+};
 
-const getAnchorPoint = (nodeId: string, anchor: 'top' | 'bottom' | 'left' | 'right' | undefined, otherPos: { x: number, y: number }) => {
+const getAnchorPoint = (nodeId: string, anchor: 'top' | 'bottom' | 'left' | 'right' | undefined, otherPos: { x: number, y: number }, offset: number = 0) => {
   const node = findNode(nodeId);
   const pos = getPos(nodeId);
   if (!node || !pos) return { x: 0, y: 0 };
@@ -41,6 +44,7 @@ const getAnchorPoint = (nodeId: string, anchor: 'top' | 'bottom' | 'left' | 'rig
   const w = node.width || DEFAULT_NODE_WIDTH;
   const h = node.variant === 'text' ? 40 : getNodeVisualHeight(node);
   const r = node.variant === 'text' ? 0 : 32; // corner radius
+  const outset = 2; // Small outset to avoid overlap with node border
 
   if (!anchor) {
     const dx = otherPos.x - pos.x;
@@ -54,13 +58,13 @@ const getAnchorPoint = (nodeId: string, anchor: 'top' | 'bottom' | 'left' | 'rig
 
   switch (anchor) {
     case 'top':
-      return { x: clamp(otherPos.x, pos.x - w / 2 + r, pos.x + w / 2 - r), y: pos.y - h / 2 };
+      return { x: clamp(otherPos.x + offset, pos.x - w / 2 + r, pos.x + w / 2 - r), y: pos.y - h / 2 - outset };
     case 'bottom':
-      return { x: clamp(otherPos.x, pos.x - w / 2 + r, pos.x + w / 2 - r), y: pos.y + h / 2 };
+      return { x: clamp(otherPos.x + offset, pos.x - w / 2 + r, pos.x + w / 2 - r), y: pos.y + h / 2 + outset };
     case 'left':
-      return { x: pos.x - w / 2, y: clamp(otherPos.y, pos.y - h / 2 + r, pos.y + h / 2 - r) };
+      return { x: pos.x - w / 2 - outset, y: clamp(otherPos.y + offset, pos.y - h / 2 + r, pos.y + h / 2 - r) };
     case 'right':
-      return { x: pos.x + w / 2, y: clamp(otherPos.y, pos.y - h / 2 + r, pos.y + h / 2 - r) };
+      return { x: pos.x + w / 2 + outset, y: clamp(otherPos.y + offset, pos.y - h / 2 + r, pos.y + h / 2 - r) };
   }
 };
 
@@ -69,8 +73,19 @@ const getPath = (edge: Edge) => {
   const toPos = getPos(edge.to);
   if (!fromPos || !toPos) return '';
 
+
   const fromNode = findNode(edge.from);
   const toNode = findNode(edge.to);
+
+  // Detect parallel/bidirectional edges for offsetting
+  const allRelated = props.edges.filter(e =>
+      (e.from === edge.from && e.to === edge.to) ||
+      (e.from === edge.to && e.to === edge.from)
+  );
+  const edgeIndex = allRelated.indexOf(edge);
+  const totalRelated = allRelated.length;
+  // Offset of 24px between parallel lines
+  const offset = totalRelated > 1 ? (edgeIndex - (totalRelated - 1) / 2) * 24 : 0;
 
   // Handle same position (Zero-length connector or self-loop)
   if (fromPos.x === toPos.x && fromPos.y === toPos.y) {
@@ -82,11 +97,11 @@ const getPath = (edge: Edge) => {
     const start = getAnchorPoint(edge.from, sAnchor, {
       x: fromPos.x + (sAnchor === 'left' ? -100 : sAnchor === 'right' ? 100 : 0),
       y: fromPos.y + (sAnchor === 'top' ? -100 : sAnchor === 'bottom' ? 100 : 0)
-    });
+    }, offset);
     const end = getAnchorPoint(edge.to, tAnchor, {
       x: fromPos.x + (tAnchor === 'left' ? -100 : tAnchor === 'right' ? 100 : 0),
       y: fromPos.y + (tAnchor === 'top' ? -100 : tAnchor === 'bottom' ? 100 : 0)
-    });
+    }, -offset); // Opposite offset for target to widen the loop if multiple exist
 
     // Control point for a nice arc that goes outward
     const cpX = (sAnchor === 'right' || tAnchor === 'right') ? Math.max(start.x, end.x) + 80 :
@@ -99,8 +114,8 @@ const getPath = (edge: Edge) => {
 
   // Use new precision logic if routing or anchors are specified
   if (edge.routing || edge.sourceAnchor || edge.targetAnchor) {
-    const start = getAnchorPoint(edge.from, edge.sourceAnchor, toPos);
-    const end = getAnchorPoint(edge.to, edge.targetAnchor, fromPos);
+    const start = getAnchorPoint(edge.from, edge.sourceAnchor, toPos, offset);
+    const end = getAnchorPoint(edge.to, edge.targetAnchor, fromPos, -offset);
 
     if (edge.routing === 'straight') {
       return `M ${start.x} ${start.y} L ${end.x} ${end.y}`;
