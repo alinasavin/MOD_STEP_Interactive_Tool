@@ -7,7 +7,8 @@
     "paddingX": 100,
     "paddingY": 100,
     "canvasHeight": 900,
-    "overviewGap": 300
+    "overviewGap": 300,
+    "topGap": 100
   },
   "entryNodeId": "user-entry",
   "instruction": "HOVER ON EACH NODE TO LEARN MORE",
@@ -27,7 +28,8 @@
       "description": "Integration Services",
       "accentColor": "grey",
       "role": "overview",
-      "width": 800
+      "width": 800,
+      "tooltipDescription": "Custodian of user experience, assuring technical quality and seamless interaction of individual services."
     }
   ],
   "nodes": [
@@ -37,7 +39,8 @@
       "description": "T&E USER",
       "iconKey": "user",
       "role": "entry",
-      "accentColor": "white"
+      "accentColor": "white",
+      "tooltipDescription": "T&E Users include Ministry of Defence (MOD) personnel from Front Line Commands, Defence Agencies, Defence Organisations, and approved defence contractors who have passed the required assurance checks by the Marketplace."
     },
     {
       "id": "user-support-services",
@@ -45,22 +48,25 @@
       "iconKey": "guidance",
       "role": "step",
       "accentColor": "pink",
-      "tooltipDescription": "Additional Information",
+      "tooltipDescription": "Helps users understand T&E and find and engage the best services for their needs, and MOD to understand market health.",
       "steps": [
         {
           "id": "market-place",
           "description": "Market Place",
-          "accentColor": "pink"
+          "accentColor": "pink",
+          "tooltipDescription": "Provides T&E users and suppliers with a single integrated portal to access the market."
         },
         {
           "id": "knowledge-hub",
           "description": "Knowledge Hub",
-          "accentColor": "pink"
+          "accentColor": "pink",
+          "tooltipDescription": "Provides T&E users and suppliers with information resources and access to expert advice on planning & conducting T&E."
         },
         {
           "id": "sqep",
           "description": "Integration Service SQEP",
-          "accentColor": "grey"
+          "accentColor": "grey",
+          "tooltipDescription": "The Integration Service will engage with all relevant stakeholders, drawing on their subject‑matter expertise across the portfolio.s"
         }
       ]
     },
@@ -70,8 +76,7 @@
       "description": "Test Plan",
       "iconKey": "services",
       "role": "step",
-      "accentColor": "blue",
-      "tooltipDescription": "Additional Information"
+      "accentColor": "blue"
     },
     {
       "id": "te-services",
@@ -79,17 +84,19 @@
       "iconKey": "services",
       "role": "step",
       "accentColor": "blue",
-      "tooltipDescription": "Additional Information",
+      "tooltipDescription": "A combination of STEP-Funded T&E Services (Critical MOD owned or retained T&E capabilities, assets and services) and Other T&E Services (UK and international network of services, facilities and ranges available for T&E)",
       "steps": [
         {
           "id": "enabling-services",
           "description": "Enabling Services",
-          "accentColor": "orange"
+          "accentColor": "orange",
+          "tooltipDescription": "Provides common enablers of T&E, where necessary to deliver the Portfolio’s mission. Accessible to all service providers within the marketplace to meet the needs of the User."
         },
         {
           "id": "international",
           "description": "International",
-          "accentColor": "blue"
+          "accentColor": "blue",
+          "tooltipDescription": "Overseas government‑owned ranges and test services, including modelling and simulation (M&S), for which the MOD already has established access agreements, as well as contractor‑owned overseas ranges and test services (including M&S), are made available for use by the wider marketplace."
         }
       ]
     },
@@ -97,10 +104,9 @@
       "id": "test",
       "label": "TEST",
       "description": "Test T&E Services",
-      "iconKey": "portfolio",
+      "iconKey": "check",
       "role": "step",
-      "accentColor": "green",
-      "tooltipDescription": "Additional Information"
+      "accentColor": "green"
     }
   ],
   "edges": [
@@ -108,8 +114,6 @@
     { "from": "user-entry", "to": "user-support-services", "style": "dashed"},
     { "from": "user-support-services", "to": "test-plan", "style": "dotted" },
     { "from": "test-plan", "to": "te-services", "style": "dotted" },
-    { "from": "te-services", "to": "test", "style": "dotted",
-      "color": "green"
-    }
+    { "from": "te-services", "to": "test", "style": "dotted"}
   ]
 }

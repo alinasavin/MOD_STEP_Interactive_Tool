@@ -10,14 +10,15 @@
     "overviewGap": 350
   },
   "entryNodeId": "user-entry",
-  "instruction": "HOVER ON EACH NODE TO LEARN MORE",
+  "instruction": "HOVER ON EACH STEP TO LEARN MORE",
   "activationMode": "reachable",
   "overviewNodes": [
     {
       "id": "integration-services",
       "description": "Integration Services",
       "accentColor": "grey",
-      "role": "overview"
+      "role": "overview",
+      "tooltipDescription": "Custodian of user experience, assuring technical quality and seamless interaction of individual services"
     }
   ],
   "nodes": [
@@ -27,21 +28,22 @@
       "description": "T&E USER",
       "iconKey": "user",
       "role": "entry",
-      "accentColor": "white"
+      "accentColor": "white",
+      "tooltipDescription": "T&E Users include Ministry of Defence (MOD) personnel from Front Line Commands, Defence Agencies, Defence Organisations, and approved defence contractors who have passed the required assurance checks by the Marketplace."
     },
     {
       "id": "user-support-services",
       "label": "User Support Services",
-
       "iconKey": "guidance",
       "role": "step",
       "accentColor": "pink",
-      "tooltipDescription": "Additional Information",
+      "tooltipDescription": "Helps users understand T&E and find and engage the best services for their needs, and MOD to understand market health.",
       "steps": [
         {
           "id": "market-place",
           "description": "Market Place",
-          "accentColor": "pink"
+          "accentColor": "pink",
+          "tooltipDescription": "Provides T&E users and suppliers with a single integrated portal to access the market."
         }
       ]
     },
@@ -51,27 +53,28 @@
       "iconKey": "services",
       "role": "step",
       "accentColor": "blue",
-      "tooltipDescription": "Additional Information",
+      "tooltipDescription": "A combination of STEP-Funded T&E Services (Critical MOD owned or retained T&E capabilities, assets and services) and Other T&E Services (UK and international network of services, facilities and ranges available for T&E)",
       "steps": [
         {
           "id": "enabling-services",
           "description": "Enabling Services",
-          "accentColor": "orange"
+          "accentColor": "orange",
+          "tooltipDescription": "Provides common enablers of T&E, where necessary to deliver the Portfolio’s mission. Accessible to all service providers within the marketplace to meet the needs of the User."
         }
       ]
     },
     {
       "id": "test",
       "label": "TEST",
-      "iconKey": "portfolio",
+      "iconKey": "check",
       "role": "step",
       "accentColor": "grey",
-      "tooltipDescription": "Additional Information",
       "steps": [
         {
           "id": "test-services",
           "description": "Test T&E Data Services",
-          "accentColor": "orange"
+          "accentColor": "orange",
+          "tooltipDescription": "Provides access to T&E data at the speed of relevance by providing high quality communications, data repositories and configuration standards."
         }
       ]
     },
@@ -82,7 +85,7 @@
       "iconKey": "check",
       "role": "end",
       "accentColor": "green",
-      "tooltipDescription": "Additional Information"
+      "tooltipDescription": "User feedback closes the loop of the process. It is initially handled by the integration service who will monitor trends and provide Management Services with evidenced recommendations for improvement"
     }
   ],
   "edges": [
@@ -93,8 +96,7 @@
     {
       "from": "user-feedback",
       "to": "integration-services",
-      "style": "dashed",
-      "color": "green"
+      "style": "dashed"
     }
   ]
 }
