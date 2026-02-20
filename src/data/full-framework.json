@@ -6,9 +6,9 @@
     "rowGap": 150,
     "paddingX": 150,
     "paddingY": 100,
-    "canvasHeight": 800,
-    "overviewGap": 320,
-    "topGap": 100
+    "canvasHeight": 850,
+    "overviewGap": 300,
+    "topGap": 120
   },
   "entryNodeId": "user-support",
   "instruction": "FULL STEP PROCESS FRAMEWORK",
@@ -19,7 +19,17 @@
       "description": "T&E Management Services",
       "accentColor": "green",
       "role": "top",
-      "width": 800
+      "width": 800,
+      "iconKey": "analyst"
+    },
+    {
+      "id": "external-drivers",
+      "description": "EXTERNAL CHANGE DRIVERS",
+      "accentColor": "orange",
+      "role": "top",
+      "variant": "text",
+      "manualX": -200,
+      "manualY": -420
     }
   ],
   "overviewNodes": [
@@ -28,7 +38,17 @@
       "description": "STEP Integration Services",
       "accentColor": "grey",
       "role": "overview",
-      "width": 800
+      "width": 800,
+      "iconKey": "services"
+    },
+    {
+      "id": "users-suppliers",
+      "description": "USERS & SUPPLIERS",
+      "accentColor": "black",
+      "role": "overview",
+      "variant": "text",
+      "manualX": -200,
+      "manualY": 0
     }
   ],
   "nodes": [
@@ -37,16 +57,11 @@
       "label": "User Support Services",
       "accentColor": "pink",
       "role": "entry",
+      "iconKey": "user",
       "steps": [
-        { "id": "user-support-1", "description": "T&E Marketplace",
-          "accentColor": "pink"
-        },
-        { "id": "user-support-2", "description": "T&E Knowledge Hub",
-          "accentColor": "pink"
-        },
-        { "id": "user-support-3", "description": "T&E Market Analysis",
-          "accentColor": "pink"
-        }
+        { "id": "user-support-1", "description": "T&E Marketplace", "accentColor": "pink" },
+        { "id": "user-support-2", "description": "T&E Knowledge Hub", "accentColor": "pink" },
+        { "id": "user-support-3", "description": "T&E Market Analysis", "accentColor": "pink" }
       ]
     },
     {
@@ -55,16 +70,17 @@
       "description": "Infrastructure & Ranges",
       "accentColor": "blue",
       "role": "step",
+      "iconKey": "services",
       "width": 600,
       "steps": [
-        { "id": "sf1", "label": "STEP-FUNDED T&E", "description": "Govt Owned (GOCO) Services" },
-        { "id": "sf2", "description": "Contractor Owned (COCO) Services" },
-        { "id": "sf3", "description": "Internationally agreed T&E" }
+        { "id": "sf1", "label": "STEP-FUNDED T&E SERVICES", "description": "Govt Owned Contractor Operated (GOCO) Services" },
+        { "id": "sf2", "description": "Contractor Owned Contractor Operated (COCO) Services" },
+        { "id": "sf3", "description": "Internationally agreed T&E Services" }
       ],
       "parallelSteps": [
-        { "id": "ot1", "label": "OTHER T&E SERVICES", "description": "Other GOCO/GOGO Services" },
+        { "id": "ot1", "label": "OTHER T&E SERVICES", "description": "Other GOCO and Govt Owned Govt Operated (GOGO) Services" },
         { "id": "ot2", "description": "UK T&E Services" },
-        { "id": "ot3", "description": "International Market T&E" }
+        { "id": "ot3", "description": "International Market T&E Services" }
       ]
     },
     {
@@ -73,8 +89,9 @@
       "description": "Common Enablers",
       "accentColor": "orange",
       "role": "step",
+      "iconKey": "provider",
       "steps": [
-        { "id": "e1", "description": "High Performance Computing" },
+        { "id": "e1", "description": "High Performance Computing Services" },
         { "id": "e2", "description": "SofS Federation Services" },
         { "id": "e3", "description": "T&E Data Services" },
         { "id": "e4", "description": "Deployable T&E enablers" }
@@ -84,14 +101,27 @@
       "id": "innovation-services",
       "description": "Innovation Services",
       "accentColor": "purple",
-      "role": "end"
+      "role": "end",
+      "iconKey": "innovation",
+      "width": 150,
+      "manualX": 1000,
+      "manualY": -300
     }
   ],
   "edges": [
-    { "from": "management-services", "to": "integration-services", "style": "solid" },
-    { "from": "integration-services", "to": "management-services", "style": "solid" },
-    { "from": "user-support", "to": "te-services-main", "style": "solid" },
-    { "from": "te-services-main", "to": "enabling-services", "style": "solid" },
-    { "from": "enabling-services", "to": "innovation-services", "style": "solid" }
+    { "from": "external-drivers", "to": "management-services", "sourceAnchor": "right", "targetAnchor": "left", "routing": "straight", "color": "orange" },
+    { "from": "management-services", "to": "innovation-services", "sourceAnchor": "right", "targetAnchor": "left", "routing": "straight", "color": "green" },
+    { "from": "management-services", "to": "integration-services", "sourceAnchor": "bottom", "targetAnchor": "top", "routing": "straight", "color": "green" },
+    { "from": "integration-services", "to": "management-services", "sourceAnchor": "top", "targetAnchor": "bottom", "routing": "straight", "color": "grey" },
+    { "from": "integration-services", "to": "user-support", "sourceAnchor": "bottom", "targetAnchor": "top", "routing": "straight", "color": "grey" },
+    { "from": "integration-services", "to": "te-services-main", "sourceAnchor": "bottom", "targetAnchor": "top", "routing": "straight", "color": "grey" },
+    { "from": "integration-services", "to": "enabling-services", "sourceAnchor": "bottom", "targetAnchor": "top", "routing": "straight", "color": "grey" },
+    { "from": "users-suppliers", "to": "user-support", "sourceAnchor": "right", "targetAnchor": "left", "routing": "straight", "color": "black" },
+    { "from": "user-support", "to": "integration-services", "sourceAnchor": "top", "targetAnchor": "bottom", "routing": "straight", "color": "pink" },
+    { "from": "te-services-main", "to": "integration-services", "sourceAnchor": "top", "targetAnchor": "bottom", "routing": "straight", "color": "blue" },
+    { "from": "enabling-services", "to": "integration-services", "sourceAnchor": "top", "targetAnchor": "bottom", "routing": "straight", "color": "orange" },
+    { "from": "innovation-services", "to": "integration-services", "sourceAnchor": "left", "targetAnchor": "right", "routing": "straight", "color": "purple" },
+    { "from": "innovation-services", "to": "enabling-services", "sourceAnchor": "bottom", "targetAnchor": "right", "routing": "orthogonal", "color": "purple" },
+    { "from": "innovation-services", "to": "te-services-main", "sourceAnchor": "bottom", "targetAnchor": "bottom", "routing": "orthogonal", "color": "purple" }
   ]
 }

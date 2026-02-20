@@ -14,7 +14,7 @@ const getStepTreeHeight = (step: DiagramStep): number => {
   return h;
 };
 
-const getNodeVisualHeight = (node: DiagramNode): number => {
+export const getNodeVisualHeight = (node: DiagramNode): number => {
   const mainH = (node.steps || []).reduce((acc, s) => acc + getStepTreeHeight(s), 0);
   const parallelH = (node.parallelSteps || []).reduce((acc, s) => acc + getStepTreeHeight(s), 0);
   // Base 120 (header + padding) + tallest column
@@ -98,10 +98,11 @@ export function calculateNodePositions(
     const startY = -(totalColHeight / 2);
 
     colNodeIds.forEach((id, nodeIndex) => {
+      const node = nodes.find(n => n.id === id);
       positions.push({
         id,
-        x: startXOffset + columnXPositions[depth],
-        y: startY + (nodeIndex * localRowGap)
+        x: node?.manualX ?? (startXOffset + columnXPositions[depth]),
+        y: node?.manualY ?? (startY + (nodeIndex * localRowGap))
       });
     });
   });
@@ -112,7 +113,11 @@ export function calculateNodePositions(
   if (overviewNodes.length > 0) {
     const gap = layoutOptions.overviewGap ?? 200;
     overviewNodes.forEach((node) => {
-      positions.push({ id: node.id, x: width / 2, y: currentMinY - gap });
+      positions.push({
+        id: node.id,
+        x: node.manualX ?? (width / 2),
+        y: node.manualY ?? (currentMinY - gap)
+      });
     });
   }
 
@@ -120,7 +125,11 @@ export function calculateNodePositions(
     const newMinY = Math.min(...positions.map(p => p.y));
     const gap = layoutOptions.topGap ?? 180;
     topNodes.forEach((node) => {
-      positions.push({ id: node.id, x: width / 2, y: newMinY - gap });
+      positions.push({
+        id: node.id,
+        x: node.manualX ?? (width / 2),
+        y: node.manualY ?? (newMinY - gap)
+      });
     });
   }
 

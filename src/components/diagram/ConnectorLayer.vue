@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Edge, DiagramNode as Node } from '../../types/diagram';
 import type { NodePosition } from '../../utils/diagramLayout';
+import { getNodeVisualHeight } from '../../utils/diagramLayout';
 
 const props = defineProps<{
   edges: Edge[];
@@ -26,8 +27,41 @@ const findNode = (id: string) => {
 
 const getNodeHeight = (node?: Node) => {
   if (!node) return BASE_NODE_HEIGHT;
-  const hasSteps = (node.steps && node.steps.length > 0) || (node.parallelSteps && node.parallelSteps.length > 0);
-  return hasSteps ? STEP_NODE_HEIGHT : BASE_NODE_HEIGHT;
+  return getNodeVisualHeight(node);
+};
+
+const clamp = (val: number, min: number, max: number) => Math.min(Math.max(val, min), max);
+
+const getAnchorPoint = (nodeId: string, anchor: 'top' | 'bottom' | 'left' | 'right' | undefined, otherPos: { x: number, y: number }) => {
+  const node = findNode(nodeId);
+  const pos = getPos(nodeId);
+  if (!node || !pos) return { x: 0, y: 0 };
+
+  const w = node.width || DEFAULT_NODE_WIDTH;
+  const h = getNodeHeight(node);
+  const r = 32; // corner radius
+
+  if (!anchor) {
+    // Default logic if no anchor specified
+    const dx = otherPos.x - pos.x;
+    const dy = otherPos.y - pos.y;
+    if (Math.abs(dx) > Math.abs(dy)) {
+      anchor = dx > 0 ? 'right' : 'left';
+    } else {
+      anchor = dy > 0 ? 'bottom' : 'top';
+    }
+  }
+
+  switch (anchor) {
+    case 'top':
+      return { x: clamp(otherPos.x, pos.x - w / 2 + r, pos.x + w / 2 - r), y: pos.y - h / 2 };
+    case 'bottom':
+      return { x: clamp(otherPos.x, pos.x - w / 2 + r, pos.x + w / 2 - r), y: pos.y + h / 2 };
+    case 'left':
+      return { x: pos.x - w / 2, y: clamp(otherPos.y, pos.y - h / 2 + r, pos.y + h / 2 - r) };
+    case 'right':
+      return { x: pos.x + w / 2, y: clamp(otherPos.y, pos.y - h / 2 + r, pos.y + h / 2 - r) };
+  }
 };
 
 const getPath = (edge: Edge) => {
@@ -38,56 +72,32 @@ const getPath = (edge: Edge) => {
   const fromNode = findNode(edge.from);
   const toNode = findNode(edge.to);
 
-  const dx = toPos.x - fromPos.x;
-  const dy = toPos.y - fromPos.y;
+  const start = getAnchorPoint(edge.from, edge.sourceAnchor, toPos);
+  const end = getAnchorPoint(edge.to, edge.targetAnchor, fromPos);
 
-  // Detect layer jump
-  const isLayerConnection = fromNode?.role === 'overview' || fromNode?.role === 'top' ||
-      toNode?.role === 'overview' || toNode?.role === 'top';
+  const routing = edge.routing || 'bezier';
 
-  if (isLayerConnection) {
-    const fromH = getNodeHeight(fromNode) / 2;
-    const toH = getNodeHeight(toNode) / 2;
-
-    const sX = fromPos.x;
-    const sY = dy > 0 ? fromPos.y + fromH : fromPos.y - fromH;
-    const eX = toPos.x;
-    const eY = dy > 0 ? toPos.y - toH : toPos.y + toH;
-
-    const vTension = Math.abs(dy) * 0.5;
-    const isVertical = Math.abs(dx) < 1;
-    const cp1x = isVertical ? sX + 1 : sX;
-    const cp2x = isVertical ? eX - 1 : eX;
-    const cp1y = dy > 0 ? sY + vTension : sY - vTension;
-    const cp2y = dy > 0 ? eY - vTension : eY + vTension;
-
-    return `M ${sX} ${sY} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${eX} ${eY}`;
+  if (routing === 'straight') {
+    return `M ${start.x} ${start.y} L ${end.x} ${end.y}`;
   }
-  else {
-    // Standard Horizontal Flow (Includes Trees)
-    const dir = Math.sign(dx) || 1;
 
-    // USES ACTUAL NODE WIDTHS FROM DATA
-    const fromW = fromNode?.width || DEFAULT_NODE_WIDTH;
-    const toW = toNode?.width || DEFAULT_NODE_WIDTH;
+  if (routing === 'orthogonal') {
+    const midY = (start.y + end.y) / 2;
+    // Simple Z-shape
+    return `M ${start.x} ${start.y} L ${start.x} ${midY} L ${end.x} ${midY} L ${end.x} ${end.y}`;
+  }
 
-    const sX = fromPos.x + (fromW / 2 * dir);
-    const sY = fromPos.y;
-    const eX = toPos.x - (toW / 2 * dir);
-    const eY = toPos.y;
+  // Bezier (Default)
+  const dx = end.x - start.x;
+  const dy = end.y - start.y;
 
-    // Calculate dynamic shoulder to prevent corner clipping
-    const gapX = Math.abs(eX - sX);
-    const shoulder = Math.min(30, gapX * 0.4);
-
-    const cp1x = sX + (shoulder * dir);
-    const cp2x = eX - (shoulder * dir);
-
-    const isHorizontal = Math.abs(dy) < 1;
-    const ctrlY1 = isHorizontal ? sY - 1 : sY;
-    const ctrlY2 = isHorizontal ? eY + 1 : eY;
-
-    return `M ${sX} ${sY} C ${cp1x} ${ctrlY1}, ${cp2x} ${ctrlY2}, ${eX} ${eY}`;
+  const isVertical = Math.abs(dx) < 10;
+  if (isVertical) {
+    const vTension = Math.abs(dy) * 0.5;
+    return `M ${start.x} ${start.y} C ${start.x} ${start.y + vTension * Math.sign(dy)}, ${end.x} ${end.y - vTension * Math.sign(dy)}, ${end.x} ${end.y}`;
+  } else {
+    const hTension = Math.min(100, Math.abs(dx) * 0.5);
+    return `M ${start.x} ${start.y} C ${start.x + hTension * Math.sign(dx)} ${start.y}, ${end.x - hTension * Math.sign(dx)} ${end.y}, ${end.x} ${end.y}`;
   }
 };
 
@@ -121,6 +131,18 @@ const getDashArray = (edge: Edge) => {
         <feGaussianBlur stdDeviation="3" result="blur" />
         <feComposite in="SourceGraphic" in2="blur" operator="over" />
       </filter>
+
+      <marker
+          id="arrowhead"
+          viewBox="0 0 10 10"
+          refX="10"
+          refY="5"
+          markerWidth="4"
+          markerHeight="4"
+          orient="auto-start-reverse"
+      >
+        <path d="M 0 0 L 10 5 L 0 10 z" fill="context-stroke" />
+      </marker>
     </defs>
 
     <path
@@ -132,6 +154,7 @@ const getDashArray = (edge: Edge) => {
         fill="none"
         :stroke-dasharray="getDashArray(edge)"
         stroke-linecap="round"
+        :marker-end="edge.showArrow !== false ? 'url(#arrowhead)' : ''"
         class="transition-all duration-700 ease-in-out"
         :opacity="isActive(edge) ? 1.0 : 0.2"
         :filter="isActive(edge) ? 'url(#glow)' : ''"
