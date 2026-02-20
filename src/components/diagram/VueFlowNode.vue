@@ -1,54 +1,51 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import type { DiagramNode } from '@/types/diagram.ts';
+import { Handle, Position } from '@vue-flow/core';
+import type { DiagramNode } from '../../types/diagram';
 import iconRegistry from '../../data/icons/icon-registry.json';
 import NodeTooltip from './NodeTooltip.vue';
 import StepItem from "./StepItem.vue";
 
 const props = defineProps<{
-  node: DiagramNode;
-  x: number;
-  y: number;
-  isActive: boolean;
+  data: DiagramNode & { isActive: boolean };
 }>();
+
+const node = computed(() => props.data);
+const isActive = computed(() => props.data.isActive);
 
 const hoveredId = ref<string | null>(null);
 
 const iconPath = computed(() => {
-  return props.node.iconKey ? (iconRegistry as Record<string, string>)[props.node.iconKey] : null;
+  return node.value.iconKey ? (iconRegistry as Record<string, string>)[node.value.iconKey] : null;
 });
 
-const accentColor = computed(() => props.node.accentColor || 'white');
+const accentColor = computed(() => node.value.accentColor || 'white');
 const colorClasses = computed(() => `accent-${accentColor.value}`);
-const hasParallel = computed(() => props.node.parallelSteps && props.node.parallelSteps.length > 0);
+const hasParallel = computed(() => node.value.parallelSteps && node.value.parallelSteps.length > 0);
 
 const handleInteraction = (isStarting: boolean) => {
-  if (props.isActive) {
-    hoveredId.value = isStarting ? props.node.id : null;
+  if (isActive.value) {
+    hoveredId.value = isStarting ? node.value.id : null;
   }
 };
 </script>
 
 <template>
   <div
-      class="absolute -translate-x-1/2 -translate-y-1/2 group diagram-node transition-all duration-1000 outline-none"
+      class="group diagram-node transition-all duration-1000 outline-none"
       tabindex="0"
       role="region"
       :aria-label="`Diagram Node: ${node.label}. ${node.description}`"
-      :aria-describedby="isActive && hoveredId === node.id ? `tooltip-${node.id}` : undefined"
       @mouseenter="handleInteraction(true)"
       @mouseleave="handleInteraction(false)"
       @focusin="handleInteraction(true)"
       @focusout="handleInteraction(false)"
       :style="{
-        left: `${x}px`,
-        top: `${y}px`,
         width: node.width ? `${node.width}px` : '16rem',
         '--node-accent': `var(--color-bright-${accentColor})`,
-        /* Bumps the node above everything when it or its children are focused/hovered */
         zIndex: hoveredId ? 100 : 20
       }"
-      :class="[isActive ? 'opacity-100 scale-100' : 'opacity-0 scale-90 pointer-events-none']"
+      :class="[isActive ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none']"
   >
     <div
         class="w-full p-5 bg-zinc-950/90 backdrop-blur-md border-2 rounded-4xl text-left relative transition-all duration-500 shadow-2xl"
@@ -58,7 +55,7 @@ const handleInteraction = (isStarting: boolean) => {
           boxShadow: isActive ? `0 10px 15px -3px var(--accent-glow)` : '',
           backgroundColor: isActive ? 'var(--accent-bg)' : ''
         }"
-        :class="[colorClasses, isActive ? 'animate-node-in' : '']"
+        :class="[colorClasses]"
     >
       <div v-if="node.tooltipDescription" class="absolute top-4 right-4 text-zinc-600 dark:text-zinc-400 opacity-60">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -105,5 +102,27 @@ const handleInteraction = (isStarting: boolean) => {
 
       <NodeTooltip v-if="isActive && hoveredId === node.id && node.tooltipDescription" :id="`tooltip-${node.id}`" :text="node.tooltipDescription" />
     </div>
+
+    <!-- Handles: Distributed for flexible routing -->
+    <Handle type="target" :position="Position.Top" id="top-target" />
+    <Handle type="source" :position="Position.Bottom" id="bottom-source" />
+    <Handle type="target" :position="Position.Left" id="left-target" />
+    <Handle type="source" :position="Position.Right" id="right-source" />
+
+    <!-- Named handles for specific image-accurate routing if needed -->
+    <Handle type="source" :position="Position.Top" id="top-source" />
+    <Handle type="target" :position="Position.Bottom" id="bottom-target" />
   </div>
 </template>
+
+<style scoped>
+.diagram-node {
+  cursor: default;
+}
+/* Completely hide handles but keep them functional */
+:deep(.vue-flow__handle) {
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+</style>

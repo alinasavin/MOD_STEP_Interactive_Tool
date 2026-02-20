@@ -4,7 +4,7 @@ import { usePersonaData } from '../composables/usePersonaData';
 import { useDiagramStore } from '../stores/useDiagramStore'; // Use Store instead of composable
 import PageShell from '../components/layout/PageShell.vue';
 import ScenarioSelector from '../components/diagram/ScenarioSelector.vue';
-import DiagramCanvas from '../components/diagram/DiagramCanvas.vue';
+import VueFlowCanvas from '../components/diagram/VueFlowCanvas.vue';
 
 
 const props = defineProps<{
@@ -91,7 +91,7 @@ watch(selectedScenarioId, async (newVal) => {
           enter-from-class="opacity-0 translate-y-10"
           enter-to-class="opacity-100 translate-y-0"
       >
-        <DiagramCanvas
+        <VueFlowCanvas
             v-if="selectedScenarioId && diagramStore.currentDiagram"
             :diagram="diagramStore.currentDiagram"
             :activeNodeIds="diagramStore.activeNodeIds"
