@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useDiagramModal } from '../../composables/useDiagramModal';
-import DiagramCanvas from '../diagram/DiagramCanvas.vue';
+import VueFlowCanvas from '../diagram/VueFlowCanvas.vue';
 import masterData from '../../data/full-framework.json';
 import type { Diagram } from '../../types/diagram';
 
@@ -48,7 +48,7 @@ const allActiveIds = computed(() => {
 
         <!-- The Persona Diagram Engine -->
         <div class="w-full">
-          <DiagramCanvas
+          <VueFlowCanvas
               v-if="isOpen"
               :diagram="(masterData as any)"
               :activeNodeIds="allActiveIds"
