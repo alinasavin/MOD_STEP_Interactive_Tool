@@ -27,6 +27,10 @@ const updateDimensions = () => {
 onMounted(async () => {
   await nextTick();
   updateDimensions();
+  // Ensure we are centered after the initial layout
+  setTimeout(() => {
+    scrollToCenter();
+  }, 500);
   window.addEventListener('resize', updateDimensions);
 });
 
@@ -80,9 +84,28 @@ const scaleFactor = computed(() => {
 
   if (contentW <= availableW) return 1;
 
-  // Zoom out if too wide, but cap at 65% zoom for readability
-  return Math.max(0.65, availableW / contentW);
+  // Zoom out if too wide. We remove the hard cap to ensure "Fit to View" as requested.
+  return Math.min(1, availableW / contentW);
 });
+
+const scrollToCenter = () => {
+  nextTick(() => {
+    const scrollContainer = scrollBodyRef.value;
+    if (!scrollContainer) return;
+
+    const contentW = contentDimensions.value.width * scaleFactor.value;
+    const contentH = contentDimensions.value.height * scaleFactor.value;
+
+    const viewportW = scrollContainer.clientWidth;
+    const viewportH = scrollContainer.clientHeight;
+
+    scrollContainer.scrollTo({
+      left: (contentW - viewportW) / 2,
+      top: (contentH - viewportH) / 2,
+      behavior: 'smooth'
+    });
+  });
+};
 
 // --- AUTO-FOLLOW PANNING (Cinematic Camera) ---
 watch(() => props.activeNodeIds, (newIds) => {
@@ -118,6 +141,10 @@ watch(() => props.activeNodeIds, (newIds) => {
   }
 }, { deep: true });
 
+watch(scaleFactor, () => {
+  scrollToCenter();
+});
+
 const nodePositions = computed(() => diagramLayout.value.positions);
 const contentDimensions = computed(() => ({ width: diagramLayout.value.width, height: diagramLayout.value.height }));
 const getPosition = (id: string) => nodePositions.value.find(p => p.id === id);
@@ -146,33 +173,43 @@ const getPosition = (id: string) => nodePositions.value.find(p => p.id === id);
         <div
             class="relative transition-all duration-1000 my-auto shrink-0"
             :style="{
-            width: `${contentDimensions.width}px`,
-            height: `${contentDimensions.height}px`,
-           marginLeft: (contentDimensions.width * scaleFactor) < containerWidth ? 'auto' : '0',
-            marginRight: (contentDimensions.width * scaleFactor) < containerWidth ? 'auto' : '0',
-            transform: `scale(${scaleFactor})`,
-            transformOrigin: 'center center'
-          }"
+              width: `${contentDimensions.width * scaleFactor}px`,
+              height: `${contentDimensions.height * scaleFactor}px`,
+              marginLeft: (contentDimensions.width * scaleFactor) < containerWidth ? 'auto' : '0',
+              marginRight: (contentDimensions.width * scaleFactor) < containerWidth ? 'auto' : '0'
+            }"
         >
-          <ConnectorLayer
-              :edges="diagram.edges"
-              :nodes="diagram.nodes"
-              :overviewNodes="diagram.overviewNodes"
-              :topNodes="diagram.topNodes"
-              :positions="nodePositions"
-              :activeNodeIds="activeNodeIds"
-              :dimensions="contentDimensions"
-          />
+          <div
+              class="relative transition-all duration-1000"
+              :style="{
+                width: `${contentDimensions.width}px`,
+                height: `${contentDimensions.height}px`,
+                transform: `scale(${scaleFactor})`,
+                transformOrigin: '0 0'
+              }"
+          >
+            <!-- Render nodes first -->
+            <template v-for="node in [...(diagram.topNodes || []), ...(diagram.overviewNodes || []), ...diagram.nodes]" :key="node.id">
+              <DiagramNodeComponent
+                  v-if="getPosition(node.id)"
+                  :node="node"
+                  :x="getPosition(node.id)!.x"
+                  :y="getPosition(node.id)!.y"
+                  :isActive="activeNodeIds.has(node.id)"
+              />
+            </template>
 
-          <template v-for="node in [...(diagram.topNodes || []), ...(diagram.overviewNodes || []), ...diagram.nodes]" :key="node.id">
-            <DiagramNodeComponent
-                v-if="getPosition(node.id)"
-                :node="node"
-                :x="getPosition(node.id)!.x"
-                :y="getPosition(node.id)!.y"
-                :isActive="activeNodeIds.has(node.id)"
+            <!-- Render connectors after nodes to ensure they are on top -->
+            <ConnectorLayer
+                :edges="diagram.edges"
+                :nodes="diagram.nodes"
+                :overviewNodes="diagram.overviewNodes"
+                :topNodes="diagram.topNodes"
+                :positions="nodePositions"
+                :activeNodeIds="activeNodeIds"
+                :dimensions="contentDimensions"
             />
-          </template>
+          </div>
         </div>
 
         <!-- Bottom Buffer for scroll comfort -->

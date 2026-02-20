@@ -72,6 +72,31 @@ const getPath = (edge: Edge) => {
   const fromNode = findNode(edge.from);
   const toNode = findNode(edge.to);
 
+  // Handle same position (Zero-length connector or self-loop)
+  if (fromPos.x === toPos.x && fromPos.y === toPos.y) {
+    // Force distinct anchors if nodes share position
+    const sAnchor = edge.sourceAnchor || 'top';
+    const tAnchor = edge.targetAnchor || 'right';
+
+    // Mock "otherPos" to get correct anchor points on the same node
+    const start = getAnchorPoint(edge.from, sAnchor, {
+      x: fromPos.x + (sAnchor === 'left' ? -100 : sAnchor === 'right' ? 100 : 0),
+      y: fromPos.y + (sAnchor === 'top' ? -100 : sAnchor === 'bottom' ? 100 : 0)
+    });
+    const end = getAnchorPoint(edge.to, tAnchor, {
+      x: fromPos.x + (tAnchor === 'left' ? -100 : tAnchor === 'right' ? 100 : 0),
+      y: fromPos.y + (tAnchor === 'top' ? -100 : tAnchor === 'bottom' ? 100 : 0)
+    });
+
+    // Control point for a nice arc that goes outward
+    const cpX = (sAnchor === 'right' || tAnchor === 'right') ? Math.max(start.x, end.x) + 80 :
+               (sAnchor === 'left' || tAnchor === 'left') ? Math.min(start.x, end.x) - 80 : (start.x + end.x) / 2 + 40;
+    const cpY = (sAnchor === 'top' || tAnchor === 'top') ? Math.min(start.y, end.y) - 80 :
+               (sAnchor === 'bottom' || tAnchor === 'bottom') ? Math.max(start.y, end.y) + 80 : (start.y + end.y) / 2 - 40;
+
+    return `M ${start.x} ${start.y} Q ${cpX} ${cpY} ${end.x} ${end.y}`;
+  }
+
   // Use new precision logic if routing or anchors are specified
   if (edge.routing || edge.sourceAnchor || edge.targetAnchor) {
     const start = getAnchorPoint(edge.from, edge.sourceAnchor, toPos);
@@ -173,7 +198,7 @@ const getDashArray = (edge: Edge) => {
 
 <template>
   <svg
-      class="absolute inset-0 w-full h-full pointer-events-none z-10"
+      class="absolute inset-0 w-full h-full pointer-events-none z-30"
       xmlns="http://www.w3.org/2000/svg"
       :viewBox="`0 0 ${dimensions.width} ${dimensions.height}`"
   >
