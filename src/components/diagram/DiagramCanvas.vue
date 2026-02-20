@@ -7,11 +7,14 @@ import ConnectorLayer from './ConnectorLayer.vue';
 import DiagramBanner from './DiagramBanner.vue';
 import { useDiagramStore } from '../../stores/useDiagramStore';
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   diagram: Diagram;
   activeNodeIds: Set<string>;
   layoutOverride?: string;
-}>();
+  showBanner?: boolean;
+}>(), {
+  showBanner: true
+});
 
 const store = useDiagramStore();
 const containerRef = ref<HTMLElement | null>(null);
@@ -84,8 +87,8 @@ const scaleFactor = computed(() => {
 
   if (contentW <= availableW) return 1;
 
-  // Zoom out if too wide. We remove the hard cap to ensure "Fit to View" as requested.
-  return Math.min(1, availableW / contentW);
+  // Cap at 0.75 to keep text legible as requested
+  return Math.max(0.75, Math.min(1, availableW / contentW));
 });
 
 const scrollToCenter = () => {
@@ -158,7 +161,7 @@ const getPosition = (id: string) => nodePositions.value.find(p => p.id === id);
         :style="{ height: `${dynamicCanvasHeight}px` }"
     >
       <!-- BANNER SECTION: Static at top -->
-      <div v-if="store.currentInstruction" class="w-full flex justify-center pt-8 shrink-0 z-30 bg-linear-to-b from-zinc-950/40 to-transparent">
+      <div v-if="showBanner && store.currentInstruction" class="w-full flex justify-center pt-8 shrink-0 z-30 bg-linear-to-b from-zinc-950/40 to-transparent">
         <DiagramBanner :text="store.currentInstruction" :color="store.bannerColor" />
       </div>
 

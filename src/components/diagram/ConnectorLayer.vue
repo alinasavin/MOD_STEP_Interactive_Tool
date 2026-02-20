@@ -44,7 +44,7 @@ const getAnchorPoint = (nodeId: string, anchor: 'top' | 'bottom' | 'left' | 'rig
   const w = node.width || (node.variant === 'text' ? 320 : DEFAULT_NODE_WIDTH);
   const h = node.variant === 'text' ? 40 : getNodeVisualHeight(node);
   const r = node.variant === 'text' ? 0 : 32; // corner radius
-  const outset = 4; // Increased outset for arrow precision
+  const outset = 8; // Further increased for arrow visibility
 
   if (!anchor) {
     const dx = otherPos.x - pos.x;
@@ -56,15 +56,18 @@ const getAnchorPoint = (nodeId: string, anchor: 'top' | 'bottom' | 'left' | 'rig
     }
   }
 
+  // Use a base X/Y for the anchor to ensure parallelism when offset is applied
+  // If the nodes are mostly aligned, we use the center. If not, we still use center+offset
+  // but clamp it to the node's edge.
   switch (anchor) {
     case 'top':
-      return { x: clamp(otherPos.x + offset, pos.x - w / 2 + r, pos.x + w / 2 - r), y: pos.y - h / 2 - outset };
+      return { x: clamp(pos.x + offset, pos.x - w / 2 + r, pos.x + w / 2 - r), y: pos.y - h / 2 - outset };
     case 'bottom':
-      return { x: clamp(otherPos.x + offset, pos.x - w / 2 + r, pos.x + w / 2 - r), y: pos.y + h / 2 + outset };
+      return { x: clamp(pos.x + offset, pos.x - w / 2 + r, pos.x + w / 2 - r), y: pos.y + h / 2 + outset };
     case 'left':
-      return { x: pos.x - w / 2 - outset, y: clamp(otherPos.y + offset, pos.y - h / 2 + r, pos.y + h / 2 - r) };
+      return { x: pos.x - w / 2 - outset, y: clamp(pos.y + offset, pos.y - h / 2 + r, pos.y + h / 2 - r) };
     case 'right':
-      return { x: pos.x + w / 2 + outset, y: clamp(otherPos.y + offset, pos.y - h / 2 + r, pos.y + h / 2 - r) };
+      return { x: pos.x + w / 2 + outset, y: clamp(pos.y + offset, pos.y - h / 2 + r, pos.y + h / 2 - r) };
   }
 };
 
@@ -140,9 +143,36 @@ const getPath = (edge: Edge) => {
     }
 
     // Default to Bezier but with precision anchors
-    const hTension = Math.min(100, Math.abs(end.x - start.x) * 0.5);
     const dx = end.x - start.x;
-    return `M ${start.x} ${start.y} C ${start.x + hTension * Math.sign(dx)} ${start.y}, ${end.x - hTension * Math.sign(dx)} ${end.y}, ${end.x} ${end.y}`;
+    const dy = end.y - start.y;
+
+    const getTension = (sA: string | undefined, tA: string | undefined, dist: number) => {
+       if (sA === tA) return 150; // Loop out more if same side
+       return Math.max(80, Math.abs(dist) * 0.5);
+    };
+
+    let cp1x = start.x;
+    let cp1y = start.y;
+    let cp2x = end.x;
+    let cp2y = end.y;
+
+    if (edge.sourceAnchor === 'top' || edge.sourceAnchor === 'bottom') {
+       const t = getTension(edge.sourceAnchor, edge.targetAnchor, dy);
+       cp1y += (edge.sourceAnchor === 'top' ? -t : t);
+    } else {
+       const t = getTension(edge.sourceAnchor, edge.targetAnchor, dx);
+       cp1x += (edge.sourceAnchor === 'left' ? -t : t);
+    }
+
+    if (edge.targetAnchor === 'top' || edge.targetAnchor === 'bottom') {
+       const t = getTension(edge.sourceAnchor, edge.targetAnchor, dy);
+       cp2y += (edge.targetAnchor === 'top' ? -t : t);
+    } else {
+       const t = getTension(edge.sourceAnchor, edge.targetAnchor, dx);
+       cp2x += (edge.targetAnchor === 'left' ? -t : t);
+    }
+
+    return `M ${start.x} ${start.y} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${end.x} ${end.y}`;
   }
 
   // ORIGINAL LOGIC for backward compatibility

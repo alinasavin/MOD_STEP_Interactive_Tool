@@ -52,6 +52,7 @@ const allActiveIds = computed(() => {
               v-if="isOpen"
               :diagram="(masterData as any)"
               :activeNodeIds="allActiveIds"
+              :showBanner="false"
           />
         </div>
       </div>
