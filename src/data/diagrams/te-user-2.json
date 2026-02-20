@@ -6,7 +6,7 @@
     "rowGap": 150,
     "paddingX": 100,
     "paddingY": 100,
-    "canvasHeight": 800,
+    "canvasHeight": 900,
     "overviewGap": 300
   },
   "entryNodeId": "user-entry",

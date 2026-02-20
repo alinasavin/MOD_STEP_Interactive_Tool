@@ -12,11 +12,12 @@ const props = defineProps<{
   dimensions: { width: number; height: number };
 }>();
 
-const NODE_WIDTH = 256;
+const DEFAULT_NODE_WIDTH = 256;
 const BASE_NODE_HEIGHT = 100;
 const STEP_NODE_HEIGHT = 180;
 
 const getPos = (id: string) => props.positions.find(p => p.id === id);
+
 const findNode = (id: string) => {
   return props.nodes.find(n => n.id === id) ||
       props.overviewNodes?.find(n => n.id === id) ||
@@ -25,9 +26,8 @@ const findNode = (id: string) => {
 
 const getNodeHeight = (node?: Node) => {
   if (!node) return BASE_NODE_HEIGHT;
-  return (node.steps && node.steps.length > 0) || (node.parallelSteps && node.parallelSteps.length > 0)
-      ? STEP_NODE_HEIGHT
-      : BASE_NODE_HEIGHT;
+  const hasSteps = (node.steps && node.steps.length > 0) || (node.parallelSteps && node.parallelSteps.length > 0);
+  return hasSteps ? STEP_NODE_HEIGHT : BASE_NODE_HEIGHT;
 };
 
 const getPath = (edge: Edge) => {
@@ -41,8 +41,6 @@ const getPath = (edge: Edge) => {
   const dx = toPos.x - fromPos.x;
   const dy = toPos.y - fromPos.y;
 
-  // FIX: ONLY use vertical anchoring if one of the nodes is a 'top' or 'overview' layer.
-  // We removed the Math.abs(dy) > 100 check so tree branches stay side-to-side.
   const isLayerConnection = fromNode?.role === 'overview' || fromNode?.role === 'top' ||
       toNode?.role === 'overview' || toNode?.role === 'top';
 
@@ -55,37 +53,44 @@ const getPath = (edge: Edge) => {
     const eX = toPos.x;
     const eY = dy > 0 ? toPos.y - toH : toPos.y + toH;
 
-    const vTension = Math.abs(dy) * 0.5;
+    const vTension = Math.abs(dy) * 0.4;
     const isPerfectlyVertical = Math.abs(dx) < 1;
     const cp1x = isPerfectlyVertical ? sX + 1 : sX;
     const cp2x = isPerfectlyVertical ? eX - 1 : eX;
-
     const cp1y = dy > 0 ? sY + vTension : sY - vTension;
     const cp2y = dy > 0 ? eY - vTension : eY + vTension;
 
     return `M ${sX} ${sY} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${eX} ${eY}`;
   }
   else {
-    // STANDARD FLOW & TREE LOGIC (Side-to-Side)
+    // STANDARD FLOW & TREE (Horizontal)
     const dir = Math.sign(dx) || 1;
-    const halfW = NODE_WIDTH / 2;
+    const fromW = fromNode?.width || DEFAULT_NODE_WIDTH;
+    const toW = toNode?.width || DEFAULT_NODE_WIDTH;
 
-    // Standard Side-to-Side Anchors
-    const sX = fromPos.x + (halfW * dir);
+    // Start/End points exactly on node borders
+    const sX = fromPos.x + (fromW / 2 * dir);
     const sY = fromPos.y;
-    const eX = toPos.x - (halfW * dir);
+    const eX = toPos.x - (toW / 2 * dir);
     const eY = toPos.y;
 
-    // CALCULATE SMOOTH S-CURVE
-    // We use two control points at the midpoint of X to create the "Ice Tree" look
-    const gapX = eX - sX;
-    const cp1x = sX + (gapX * 0.5);
-    const cp2x = eX - (gapX * 0.5);
+    /**
+     * BALANCED SHOULDER LOGIC
+     * We force the line to leave the node horizontally and enter horizontally.
+     * This stops the line from cutting across rounded corners.
+     */
+    const gapX = Math.abs(eX - sX);
+    const shoulderLength = Math.min(30, gapX * 0.4);
 
-    // 1px bulge fix for horizontal lines
+    const cp1x = sX + (shoulderLength * dir);
+    const cp1y = sY; // Match start Y for perfectly flat exit
+    const cp2x = eX - (shoulderLength * dir);
+    const cp2y = eY; // Match end Y for perfectly flat entry
+
+    // 1px bulge fix solely for the 'glow' filter bounding box
     const isHorizontal = Math.abs(dy) < 1;
-    const ctrlY1 = isHorizontal ? sY - 1 : sY;
-    const ctrlY2 = isHorizontal ? eY + 1 : eY;
+    const ctrlY1 = isHorizontal ? sY - 1 : cp1y;
+    const ctrlY2 = isHorizontal ? eY + 1 : cp2y;
 
     return `M ${sX} ${sY} C ${cp1x} ${ctrlY1}, ${cp2x} ${ctrlY2}, ${eX} ${eY}`;
   }
@@ -95,10 +100,10 @@ const isActive = (edge: Edge) => props.activeNodeIds.has(edge.from) && props.act
 
 const getStrokeColor = (edge: Edge) => {
   if (!isActive(edge)) return '#27272a';
-  if (edge.color) return `var(--color-bright-${edge.color.toLowerCase()}, #ab92e1 )`;
+  if (edge.color) return `var(--color-bright-${edge.color.toLowerCase()}, #ab92e1)`;
   const fromNode = findNode(edge.from);
-  const colorKey = fromNode?.accentColor?.toLowerCase().trim() || 'bright-grey';
-  return `var(--color-bright-${colorKey}, #ab92e1 )`;
+  const colorKey = fromNode?.accentColor?.toLowerCase().trim() || 'pink';
+  return `var(--color-bright-${colorKey}, #ab92e1)`;
 };
 
 const getDashArray = (edge: Edge) => {
@@ -128,12 +133,12 @@ const getDashArray = (edge: Edge) => {
         :key="`edge-${edge.from}-${edge.to}-${index}`"
         :d="getPath(edge)"
         :stroke="getStrokeColor(edge)"
-        :stroke-width="isActive(edge) ? '3' : '2'"
+        :stroke-width="isActive(edge) ? '3' : '1.5'"
         fill="none"
         :stroke-dasharray="getDashArray(edge)"
         stroke-linecap="round"
         class="transition-all duration-700 ease-in-out"
-        :opacity="isActive(edge) ? 1.0 : 0.15"
+        :opacity="isActive(edge) ? 1.0 : 0.2"
         :filter="isActive(edge) ? 'url(#glow)' : ''"
     />
   </svg>
