@@ -4,7 +4,7 @@ import HeaderNav from './HeaderNav.vue';
 </script>
 
 <template>
-  <div class="min-h-screen flex flex-col bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 transition-colors duration-300 font-sans overflow-x-hidden">
+  <div class="min-h-screen flex flex-col bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 transition-colors duration-300">
     <HeaderNav />
     <main class="flex-grow relative">
       <slot />
