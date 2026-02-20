@@ -109,19 +109,19 @@
     }
   ],
   "edges": [
-    { "from": "external-drivers", "to": "management-services", "sourceAnchor": "right", "targetAnchor": "left", "routing": "straight", "color": "orange" },
-    { "from": "management-services", "to": "innovation-services", "sourceAnchor": "right", "targetAnchor": "left", "routing": "straight", "color": "green" },
-    { "from": "management-services", "to": "integration-services", "sourceAnchor": "bottom", "targetAnchor": "top", "routing": "straight", "color": "green" },
-    { "from": "integration-services", "to": "management-services", "sourceAnchor": "top", "targetAnchor": "bottom", "routing": "straight", "color": "grey" },
-    { "from": "integration-services", "to": "user-support", "sourceAnchor": "bottom", "targetAnchor": "top", "routing": "straight", "color": "grey" },
-    { "from": "integration-services", "to": "te-services-main", "sourceAnchor": "bottom", "targetAnchor": "top", "routing": "straight", "color": "grey" },
-    { "from": "integration-services", "to": "enabling-services", "sourceAnchor": "bottom", "targetAnchor": "top", "routing": "straight", "color": "grey" },
-    { "from": "users-suppliers", "to": "user-support", "sourceAnchor": "right", "targetAnchor": "left", "routing": "straight", "color": "black" },
-    { "from": "user-support", "to": "integration-services", "sourceAnchor": "top", "targetAnchor": "bottom", "routing": "straight", "color": "pink" },
-    { "from": "te-services-main", "to": "integration-services", "sourceAnchor": "top", "targetAnchor": "bottom", "routing": "straight", "color": "blue" },
-    { "from": "enabling-services", "to": "integration-services", "sourceAnchor": "top", "targetAnchor": "bottom", "routing": "straight", "color": "orange" },
-    { "from": "innovation-services", "to": "integration-services", "sourceAnchor": "left", "targetAnchor": "right", "routing": "straight", "color": "purple" },
-    { "from": "innovation-services", "to": "enabling-services", "sourceAnchor": "bottom", "targetAnchor": "right", "routing": "orthogonal", "color": "purple" },
-    { "from": "innovation-services", "to": "te-services-main", "sourceAnchor": "bottom", "targetAnchor": "bottom", "routing": "orthogonal", "color": "purple" }
+    { "from": "external-drivers", "to": "management-services", "sourceAnchor": "right", "targetAnchor": "left", "routing": "straight", "color": "orange", "showArrow": true },
+    { "from": "management-services", "to": "innovation-services", "sourceAnchor": "right", "targetAnchor": "left", "routing": "straight", "color": "green", "showArrow": true },
+    { "from": "management-services", "to": "integration-services", "sourceAnchor": "bottom", "targetAnchor": "top", "routing": "straight", "color": "green", "showArrow": true },
+    { "from": "integration-services", "to": "management-services", "sourceAnchor": "top", "targetAnchor": "bottom", "routing": "straight", "color": "grey", "showArrow": true },
+    { "from": "integration-services", "to": "user-support", "sourceAnchor": "bottom", "targetAnchor": "top", "routing": "straight", "color": "grey", "showArrow": true },
+    { "from": "integration-services", "to": "te-services-main", "sourceAnchor": "bottom", "targetAnchor": "top", "routing": "straight", "color": "grey", "showArrow": true },
+    { "from": "integration-services", "to": "enabling-services", "sourceAnchor": "bottom", "targetAnchor": "top", "routing": "straight", "color": "grey", "showArrow": true },
+    { "from": "users-suppliers", "to": "user-support", "sourceAnchor": "right", "targetAnchor": "left", "routing": "straight", "color": "black", "showArrow": true },
+    { "from": "user-support", "to": "integration-services", "sourceAnchor": "top", "targetAnchor": "bottom", "routing": "straight", "color": "pink", "showArrow": true },
+    { "from": "te-services-main", "to": "integration-services", "sourceAnchor": "top", "targetAnchor": "bottom", "routing": "straight", "color": "blue", "showArrow": true },
+    { "from": "enabling-services", "to": "integration-services", "sourceAnchor": "top", "targetAnchor": "bottom", "routing": "straight", "color": "orange", "showArrow": true },
+    { "from": "innovation-services", "to": "integration-services", "sourceAnchor": "left", "targetAnchor": "right", "routing": "straight", "color": "purple", "showArrow": true },
+    { "from": "innovation-services", "to": "enabling-services", "sourceAnchor": "bottom", "targetAnchor": "right", "routing": "orthogonal", "color": "purple", "showArrow": true },
+    { "from": "innovation-services", "to": "te-services-main", "sourceAnchor": "bottom", "targetAnchor": "right", "routing": "orthogonal", "color": "purple", "showArrow": true }
   ]
 }

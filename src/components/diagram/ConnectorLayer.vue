@@ -25,9 +25,10 @@ const findNode = (id: string) => {
       props.topNodes?.find(n => n.id === id);
 };
 
-const getNodeHeight = (node?: Node) => {
+const getNodeHeightOriginal = (node?: Node) => {
   if (!node) return BASE_NODE_HEIGHT;
-  return getNodeVisualHeight(node);
+  const hasSteps = (node.steps && node.steps.length > 0) || (node.parallelSteps && node.parallelSteps.length > 0);
+  return hasSteps ? STEP_NODE_HEIGHT : BASE_NODE_HEIGHT;
 };
 
 const clamp = (val: number, min: number, max: number) => Math.min(Math.max(val, min), max);
@@ -38,11 +39,10 @@ const getAnchorPoint = (nodeId: string, anchor: 'top' | 'bottom' | 'left' | 'rig
   if (!node || !pos) return { x: 0, y: 0 };
 
   const w = node.width || DEFAULT_NODE_WIDTH;
-  const h = getNodeHeight(node);
-  const r = 32; // corner radius
+  const h = node.variant === 'text' ? 40 : getNodeVisualHeight(node);
+  const r = node.variant === 'text' ? 0 : 32; // corner radius
 
   if (!anchor) {
-    // Default logic if no anchor specified
     const dx = otherPos.x - pos.x;
     const dy = otherPos.y - pos.y;
     if (Math.abs(dx) > Math.abs(dy)) {
@@ -72,32 +72,79 @@ const getPath = (edge: Edge) => {
   const fromNode = findNode(edge.from);
   const toNode = findNode(edge.to);
 
-  const start = getAnchorPoint(edge.from, edge.sourceAnchor, toPos);
-  const end = getAnchorPoint(edge.to, edge.targetAnchor, fromPos);
+  // Use new precision logic if routing or anchors are specified
+  if (edge.routing || edge.sourceAnchor || edge.targetAnchor) {
+    const start = getAnchorPoint(edge.from, edge.sourceAnchor, toPos);
+    const end = getAnchorPoint(edge.to, edge.targetAnchor, fromPos);
 
-  const routing = edge.routing || 'bezier';
+    if (edge.routing === 'straight') {
+      return `M ${start.x} ${start.y} L ${end.x} ${end.y}`;
+    }
 
-  if (routing === 'straight') {
-    return `M ${start.x} ${start.y} L ${end.x} ${end.y}`;
-  }
+    if (edge.routing === 'orthogonal') {
+      // Create a Z-shape or L-shape
+      const dx = end.x - start.x;
+      const dy = end.y - start.y;
 
-  if (routing === 'orthogonal') {
-    const midY = (start.y + end.y) / 2;
-    // Simple Z-shape
-    return `M ${start.x} ${start.y} L ${start.x} ${midY} L ${end.x} ${midY} L ${end.x} ${end.y}`;
-  }
+      if (edge.sourceAnchor === 'bottom' && edge.targetAnchor === 'right') {
+         // Special case for Innovation -> Enabling/TE
+         return `M ${start.x} ${start.y} L ${start.x} ${end.y} L ${end.x} ${end.y}`;
+      }
 
-  // Bezier (Default)
-  const dx = end.x - start.x;
-  const dy = end.y - start.y;
+      const midY = (start.y + end.y) / 2;
+      return `M ${start.x} ${start.y} L ${start.x} ${midY} L ${end.x} ${midY} L ${end.x} ${end.y}`;
+    }
 
-  const isVertical = Math.abs(dx) < 10;
-  if (isVertical) {
-    const vTension = Math.abs(dy) * 0.5;
-    return `M ${start.x} ${start.y} C ${start.x} ${start.y + vTension * Math.sign(dy)}, ${end.x} ${end.y - vTension * Math.sign(dy)}, ${end.x} ${end.y}`;
-  } else {
-    const hTension = Math.min(100, Math.abs(dx) * 0.5);
+    // Default to Bezier but with precision anchors
+    const hTension = Math.min(100, Math.abs(end.x - start.x) * 0.5);
+    const dx = end.x - start.x;
     return `M ${start.x} ${start.y} C ${start.x + hTension * Math.sign(dx)} ${start.y}, ${end.x - hTension * Math.sign(dx)} ${end.y}, ${end.x} ${end.y}`;
+  }
+
+  // ORIGINAL LOGIC for backward compatibility
+  const dx = toPos.x - fromPos.x;
+  const dy = toPos.y - fromPos.y;
+
+  const isLayerConnection = fromNode?.role === 'overview' || fromNode?.role === 'top' ||
+      toNode?.role === 'overview' || toNode?.role === 'top';
+
+  if (isLayerConnection) {
+    const fromH = getNodeHeightOriginal(fromNode) / 2;
+    const toH = getNodeHeightOriginal(toNode) / 2;
+
+    const sX = fromPos.x;
+    const sY = dy > 0 ? fromPos.y + fromH : fromPos.y - fromH;
+    const eX = toPos.x;
+    const eY = dy > 0 ? toPos.y - toH : toPos.y + toH;
+
+    const vTension = Math.abs(dy) * 0.5;
+    const isVertical = Math.abs(dx) < 1;
+    const cp1x = isVertical ? sX + 1 : sX;
+    const cp2x = isVertical ? eX - 1 : eX;
+    const cp1y = dy > 0 ? sY + vTension : sY - vTension;
+    const cp2y = dy > 0 ? eY - vTension : eY + vTension;
+
+    return `M ${sX} ${sY} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${eX} ${eY}`;
+  } else {
+    const dir = Math.sign(dx) || 1;
+    const fromW = fromNode?.width || DEFAULT_NODE_WIDTH;
+    const toW = toNode?.width || DEFAULT_NODE_WIDTH;
+
+    const sX = fromPos.x + (fromW / 2 * dir);
+    const sY = fromPos.y;
+    const eX = toPos.x - (toW / 2 * dir);
+    const eY = toPos.y;
+
+    const gapX = Math.abs(eX - sX);
+    const shoulder = Math.min(30, gapX * 0.4);
+    const cp1x = sX + (shoulder * dir);
+    const cp2x = eX - (shoulder * dir);
+
+    const isHorizontal = Math.abs(dy) < 1;
+    const ctrlY1 = isHorizontal ? sY - 1 : sY;
+    const ctrlY2 = isHorizontal ? eY + 1 : eY;
+
+    return `M ${sX} ${sY} C ${cp1x} ${ctrlY1}, ${cp2x} ${ctrlY2}, ${eX} ${eY}`;
   }
 };
 
@@ -105,7 +152,11 @@ const isActive = (edge: Edge) => props.activeNodeIds.has(edge.from) && props.act
 
 const getStrokeColor = (edge: Edge) => {
   if (!isActive(edge)) return '#27272a';
-  if (edge.color) return `var(--color-bright-${edge.color.toLowerCase()}, #ab92e1)`;
+  if (edge.color) {
+     if (edge.color.startsWith('#')) return edge.color;
+     if (edge.color === 'black') return '#000000';
+     return `var(--color-bright-${edge.color.toLowerCase()}, #ab92e1)`;
+  }
   const fromNode = findNode(edge.from);
   const colorKey = fromNode?.accentColor?.toLowerCase().trim() || 'pink';
   return `var(--color-bright-${colorKey}, #ab92e1)`;
@@ -154,7 +205,7 @@ const getDashArray = (edge: Edge) => {
         fill="none"
         :stroke-dasharray="getDashArray(edge)"
         stroke-linecap="round"
-        :marker-end="edge.showArrow !== false ? 'url(#arrowhead)' : ''"
+        :marker-end="edge.showArrow ? 'url(#arrowhead)' : ''"
         class="transition-all duration-700 ease-in-out"
         :opacity="isActive(edge) ? 1.0 : 0.2"
         :filter="isActive(edge) ? 'url(#glow)' : ''"

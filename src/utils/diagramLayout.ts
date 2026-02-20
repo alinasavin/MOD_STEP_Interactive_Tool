@@ -101,8 +101,8 @@ export function calculateNodePositions(
       const node = nodes.find(n => n.id === id);
       positions.push({
         id,
-        x: node?.manualX ?? (startXOffset + columnXPositions[depth]),
-        y: node?.manualY ?? (startY + (nodeIndex * localRowGap))
+        x: (node?.manualX !== undefined) ? node.manualX : (startXOffset + columnXPositions[depth]),
+        y: (node?.manualY !== undefined) ? node.manualY : (startY + (nodeIndex * localRowGap))
       });
     });
   });
@@ -115,8 +115,8 @@ export function calculateNodePositions(
     overviewNodes.forEach((node) => {
       positions.push({
         id: node.id,
-        x: node.manualX ?? (width / 2),
-        y: node.manualY ?? (currentMinY - gap)
+        x: (node.manualX !== undefined) ? node.manualX : (width / 2),
+        y: (node.manualY !== undefined) ? node.manualY : (currentMinY - gap)
       });
     });
   }
@@ -127,8 +127,8 @@ export function calculateNodePositions(
     topNodes.forEach((node) => {
       positions.push({
         id: node.id,
-        x: node.manualX ?? (width / 2),
-        y: node.manualY ?? (newMinY - gap)
+        x: (node.manualX !== undefined) ? node.manualX : (width / 2),
+        y: (node.manualY !== undefined) ? node.manualY : (newMinY - gap)
       });
     });
   }
