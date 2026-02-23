@@ -130,7 +130,11 @@ const getPath = (edge: Edge) => {
     const end = getAnchorPoint(edge.to, edge.targetAnchor, fromPos, offset);
 
     if (edge.routing === 'straight') {
-      return `M ${start.x} ${start.y} L ${end.x} ${end.y}`;
+      const dx = end.x - start.x;
+      const dy = end.y - start.y;
+      // Add a tiny offset to ensure the path has a direction for the marker
+      const fudge = 0.01;
+      return `M ${start.x} ${start.y} L ${end.x + (dx === 0 ? fudge : 0)} ${end.y + (dy === 0 ? fudge : 0)}`;
     }
 
     if (edge.routing === 'orthogonal') {
@@ -293,7 +297,7 @@ const getDashArray = (edge: Edge) => {
         fill="none"
         :stroke-dasharray="getDashArray(edge)"
         stroke-linecap="round"
-        :marker-end="edge.showArrow ? 'url(#arrowhead)' : ''"
+        :marker-end="edge.showArrow !== false ? 'url(#arrowhead)' : ''"
         class="transition-all duration-700 ease-in-out"
         :opacity="isActive(edge) ? 1.0 : 0.2"
         :filter="isActive(edge) ? 'url(#glow)' : ''"

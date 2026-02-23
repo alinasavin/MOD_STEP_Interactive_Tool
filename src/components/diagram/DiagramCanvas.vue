@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, onMounted, onUnmounted, nextTick, watch } from 'vue';
 import type { Diagram } from '../../types/diagram';
-import { calculateNodePositions } from '../../utils/diagramLayout';
+import { calculateNodePositions, getNodeVisualHeight } from '../../utils/diagramLayout';
 import DiagramNodeComponent from './DiagramNode.vue';
 import ConnectorLayer from './ConnectorLayer.vue';
 import DiagramBanner from './DiagramBanner.vue';
@@ -61,21 +61,35 @@ const diagramLayout = computed(() => {
   const pX = layoutOptions.value.paddingX ?? 100;
   const pY = 100;
 
-  const minX = Math.min(...raw.map(p => p.x));
-  const maxX = Math.max(...raw.map(p => p.x));
-  const minY = Math.min(...raw.map(p => p.y));
-  const maxY = Math.max(...raw.map(p => p.y));
+  // Account for node dimensions in bounds calculation
+  const nodeBounds = raw.map(p => {
+    const node = [...(props.diagram.topNodes || []), ...(props.diagram.overviewNodes || []), ...(props.diagram.nodes || [])]
+      .find(n => n.id === p.id);
+    const w = node?.width || 256;
+    const h = node?.variant === 'text' ? 40 : (node ? getNodeVisualHeight(node) : 120);
+    return {
+      left: p.x - w / 2,
+      right: p.x + w / 2,
+      top: p.y - h / 2,
+      bottom: p.y + h / 2
+    };
+  });
+
+  const minX = Math.min(...nodeBounds.map(b => b.left));
+  const maxX = Math.max(...nodeBounds.map(b => b.right));
+  const minY = Math.min(...nodeBounds.map(b => b.top));
+  const maxY = Math.max(...nodeBounds.map(b => b.bottom));
 
   const positions = raw.map(p => ({
     ...p,
-    x: (p.x - minX) + pX + 128,
-    y: (p.y - minY) + pY + 50
+    x: (p.x - minX) + pX,
+    y: (p.y - minY) + pY
   }));
 
   return {
     positions,
-    width: (maxX - minX) + 256 + (pX * 2),
-    height: (maxY - minY) + 100 + (pY * 2) + 150
+    width: (maxX - minX) + (pX * 2),
+    height: (maxY - minY) + (pY * 2) + 150 // Extra 150px for bottom orthogonal routes
   };
 });
 

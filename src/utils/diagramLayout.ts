@@ -7,8 +7,8 @@ export interface NodePosition {
 }
 
 const getStepTreeHeight = (step: DiagramStep): number => {
-  // Each step is roughly 60px tall plus some gap
-  let h = 64;
+  // Each step is roughly 80px tall plus some gap to account for text wrapping
+  let h = 80;
   if (step.subSteps && step.subSteps.length > 0) {
     step.subSteps.forEach((s) => { h += getStepTreeHeight(s); });
     h += 12; // Extra padding for sub-step container
@@ -24,7 +24,8 @@ export const getNodeVisualHeight = (node: DiagramNode): number => {
 
   // Base height needs to be generous to ensure arrows don't clip into the border
   const hasSteps = (node.steps?.length || 0) > 0 || (node.parallelSteps?.length || 0) > 0;
-  const baseHeight = hasSteps ? 140 : 110;
+  // Increase baseHeight for box nodes to ensure content fits
+  const baseHeight = hasSteps ? 160 : 120;
 
   return baseHeight + Math.max(mainH, parallelH);
 };
