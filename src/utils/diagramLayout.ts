@@ -7,18 +7,27 @@ export interface NodePosition {
 }
 
 const getStepTreeHeight = (step: DiagramStep): number => {
-  let h = 45;
+  // Each step is roughly 80px tall plus some gap to account for text wrapping
+  let h = 80;
   if (step.subSteps && step.subSteps.length > 0) {
     step.subSteps.forEach((s) => { h += getStepTreeHeight(s); });
+    h += 12; // Extra padding for sub-step container
   }
   return h;
 };
 
 export const getNodeVisualHeight = (node: DiagramNode): number => {
+  if (node.manualHeight) return node.manualHeight;
+
   const mainH = (node.steps || []).reduce((acc, s) => acc + getStepTreeHeight(s), 0);
   const parallelH = (node.parallelSteps || []).reduce((acc, s) => acc + getStepTreeHeight(s), 0);
-  // Base 120 (header + padding) + tallest column
-  return 120 + Math.max(mainH, parallelH);
+
+  // Base height needs to be generous to ensure arrows don't clip into the border
+  const hasSteps = (node.steps?.length || 0) > 0 || (node.parallelSteps?.length || 0) > 0;
+  // Reduce baseHeight to bring connectors closer to the borders
+  const baseHeight = hasSteps ? 130 : 90;
+
+  return baseHeight + Math.max(mainH, parallelH);
 };
 
 export function calculateNodePositions(

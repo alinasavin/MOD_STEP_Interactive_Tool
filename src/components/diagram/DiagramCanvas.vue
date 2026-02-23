@@ -1,17 +1,20 @@
 <script setup lang="ts">
 import { computed, ref, onMounted, onUnmounted, nextTick, watch } from 'vue';
 import type { Diagram } from '../../types/diagram';
-import { calculateNodePositions } from '../../utils/diagramLayout';
+import { calculateNodePositions, getNodeVisualHeight } from '../../utils/diagramLayout';
 import DiagramNodeComponent from './DiagramNode.vue';
 import ConnectorLayer from './ConnectorLayer.vue';
 import DiagramBanner from './DiagramBanner.vue';
 import { useDiagramStore } from '../../stores/useDiagramStore';
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   diagram: Diagram;
   activeNodeIds: Set<string>;
   layoutOverride?: string;
-}>();
+  showBanner?: boolean;
+}>(), {
+  showBanner: true
+});
 
 const store = useDiagramStore();
 const containerRef = ref<HTMLElement | null>(null);
@@ -27,6 +30,10 @@ const updateDimensions = () => {
 onMounted(async () => {
   await nextTick();
   updateDimensions();
+  // Ensure we are centered after the initial layout
+  setTimeout(() => {
+    scrollToCenter();
+  }, 500);
   window.addEventListener('resize', updateDimensions);
 });
 
@@ -52,23 +59,37 @@ const diagramLayout = computed(() => {
   if (raw.length === 0) return { positions: [], width: 0, height: 0 };
 
   const pX = layoutOptions.value.paddingX ?? 100;
-  const pY = 40;
+  const pY = 100;
 
-  const minX = Math.min(...raw.map(p => p.x));
-  const maxX = Math.max(...raw.map(p => p.x));
-  const minY = Math.min(...raw.map(p => p.y));
-  const maxY = Math.max(...raw.map(p => p.y));
+  // Account for node dimensions in bounds calculation
+  const nodeBounds = raw.map(p => {
+    const node = [...(props.diagram.topNodes || []), ...(props.diagram.overviewNodes || []), ...(props.diagram.nodes || [])]
+      .find(n => n.id === p.id);
+    const w = node?.width || 256;
+    const h = node?.variant === 'text' ? 40 : (node ? getNodeVisualHeight(node) : 120);
+    return {
+      left: p.x - w / 2,
+      right: p.x + w / 2,
+      top: p.y - h / 2,
+      bottom: p.y + h / 2
+    };
+  });
+
+  const minX = Math.min(...nodeBounds.map(b => b.left));
+  const maxX = Math.max(...nodeBounds.map(b => b.right));
+  const minY = Math.min(...nodeBounds.map(b => b.top));
+  const maxY = Math.max(...nodeBounds.map(b => b.bottom));
 
   const positions = raw.map(p => ({
     ...p,
-    x: (p.x - minX) + pX + 128,
-    y: (p.y - minY) + pY + 50
+    x: (p.x - minX) + pX,
+    y: (p.y - minY) + pY
   }));
 
   return {
     positions,
-    width: (maxX - minX) + 256 + (pX * 2),
-    height: (maxY - minY) + 100 + (pY * 2)
+    width: (maxX - minX) + (pX * 2),
+    height: (maxY - minY) + (pY * 2) + 150 // Extra 150px for bottom orthogonal routes
   };
 });
 
@@ -76,13 +97,32 @@ const diagramLayout = computed(() => {
 const scaleFactor = computed(() => {
   if (containerWidth.value === 0) return 1;
   const contentW = diagramLayout.value.width;
-  const availableW = containerWidth.value - 60; // Internal padding safety
+  const availableW = containerWidth.value - 40; // Internal padding safety
 
   if (contentW <= availableW) return 1;
 
-  // Zoom out if too wide, but cap at 65% zoom for readability
-  return Math.max(0.65, availableW / contentW);
+  // Allow scaling down to 0.4 to ensure it fits on mobile as requested
+  return Math.max(0.4, Math.min(1, availableW / contentW));
 });
+
+const scrollToCenter = () => {
+  nextTick(() => {
+    const scrollContainer = scrollBodyRef.value;
+    if (!scrollContainer) return;
+
+    const contentW = contentDimensions.value.width * scaleFactor.value;
+    const contentH = contentDimensions.value.height * scaleFactor.value;
+
+    const viewportW = scrollContainer.clientWidth;
+    const viewportH = scrollContainer.clientHeight;
+
+    scrollContainer.scrollTo({
+      left: (contentW - viewportW) / 2,
+      top: (contentH - viewportH) / 2,
+      behavior: 'smooth'
+    });
+  });
+};
 
 // --- AUTO-FOLLOW PANNING (Cinematic Camera) ---
 watch(() => props.activeNodeIds, (newIds) => {
@@ -118,6 +158,10 @@ watch(() => props.activeNodeIds, (newIds) => {
   }
 }, { deep: true });
 
+watch(scaleFactor, () => {
+  scrollToCenter();
+});
+
 const nodePositions = computed(() => diagramLayout.value.positions);
 const contentDimensions = computed(() => ({ width: diagramLayout.value.width, height: diagramLayout.value.height }));
 const getPosition = (id: string) => nodePositions.value.find(p => p.id === id);
@@ -131,7 +175,7 @@ const getPosition = (id: string) => nodePositions.value.find(p => p.id === id);
         :style="{ height: `${dynamicCanvasHeight}px` }"
     >
       <!-- BANNER SECTION: Static at top -->
-      <div v-if="store.currentInstruction" class="w-full flex justify-center pt-8 shrink-0 z-30 bg-linear-to-b from-zinc-950/40 to-transparent">
+      <div v-if="showBanner && store.currentInstruction" class="w-full flex justify-center pt-8 shrink-0 z-30 bg-linear-to-b from-zinc-950/40 to-transparent">
         <DiagramBanner :text="store.currentInstruction" :color="store.bannerColor" />
       </div>
 
@@ -146,33 +190,43 @@ const getPosition = (id: string) => nodePositions.value.find(p => p.id === id);
         <div
             class="relative transition-all duration-1000 my-auto shrink-0"
             :style="{
-            width: `${contentDimensions.width}px`,
-            height: `${contentDimensions.height}px`,
-           marginLeft: (contentDimensions.width * scaleFactor) < containerWidth ? 'auto' : '0',
-            marginRight: (contentDimensions.width * scaleFactor) < containerWidth ? 'auto' : '0',
-            transform: `scale(${scaleFactor})`,
-            transformOrigin: 'center center'
-          }"
+              width: `${contentDimensions.width * scaleFactor}px`,
+              height: `${contentDimensions.height * scaleFactor}px`,
+              marginLeft: (contentDimensions.width * scaleFactor) < containerWidth ? 'auto' : '0',
+              marginRight: (contentDimensions.width * scaleFactor) < containerWidth ? 'auto' : '0'
+            }"
         >
-          <ConnectorLayer
-              :edges="diagram.edges"
-              :nodes="diagram.nodes"
-              :overviewNodes="diagram.overviewNodes"
-              :topNodes="diagram.topNodes"
-              :positions="nodePositions"
-              :activeNodeIds="activeNodeIds"
-              :dimensions="contentDimensions"
-          />
+          <div
+              class="relative transition-all duration-1000"
+              :style="{
+                width: `${contentDimensions.width}px`,
+                height: `${contentDimensions.height}px`,
+                transform: `scale(${scaleFactor})`,
+                transformOrigin: '0 0'
+              }"
+          >
+            <!-- Render nodes first -->
+            <template v-for="node in [...(diagram.topNodes || []), ...(diagram.overviewNodes || []), ...diagram.nodes]" :key="node.id">
+              <DiagramNodeComponent
+                  v-if="getPosition(node.id)"
+                  :node="node"
+                  :x="getPosition(node.id)!.x"
+                  :y="getPosition(node.id)!.y"
+                  :isActive="activeNodeIds.has(node.id)"
+              />
+            </template>
 
-          <template v-for="node in [...(diagram.topNodes || []), ...(diagram.overviewNodes || []), ...diagram.nodes]" :key="node.id">
-            <DiagramNodeComponent
-                v-if="getPosition(node.id)"
-                :node="node"
-                :x="getPosition(node.id)!.x"
-                :y="getPosition(node.id)!.y"
-                :isActive="activeNodeIds.has(node.id)"
+            <!-- Render connectors after nodes to ensure they are on top -->
+            <ConnectorLayer
+                :edges="diagram.edges"
+                :nodes="diagram.nodes"
+                :overviewNodes="diagram.overviewNodes"
+                :topNodes="diagram.topNodes"
+                :positions="nodePositions"
+                :activeNodeIds="activeNodeIds"
+                :dimensions="contentDimensions"
             />
-          </template>
+          </div>
         </div>
 
         <!-- Bottom Buffer for scroll comfort -->

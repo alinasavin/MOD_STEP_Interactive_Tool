@@ -19,6 +19,7 @@ export interface DiagramNode {
   accentColor?: string;
   tooltipDescription?: string;
   width?: number;
+  manualHeight?: number;
   variant?: 'box' | 'text';
   manualX?: number;
   manualY?: number;

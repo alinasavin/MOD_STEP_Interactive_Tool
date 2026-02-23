@@ -129,7 +129,7 @@
     { "from": "user-support", "to": "integration-services", "sourceAnchor": "top", "targetAnchor": "bottom", "routing": "straight", "color": "pink", "showArrow": true },
     { "from": "te-services-main", "to": "integration-services", "sourceAnchor": "top", "targetAnchor": "bottom", "routing": "straight", "color": "blue", "showArrow": true },
     { "from": "innovation-services", "to": "integration-services", "sourceAnchor": "bottom", "targetAnchor": "right", "routing": "straight", "color": "purple", "showArrow": true },
-    { "from": "innovation-services", "to": "enabling-services", "sourceAnchor": "bottom", "targetAnchor": "right", "routing": "orthogonal", "color": "purple", "showArrow": true },
-    { "from": "innovation-services", "to": "te-services-main", "sourceAnchor": "bottom", "targetAnchor": "top", "routing": "orthogonal", "color": "purple", "showArrow": true }
+    { "from": "innovation-services", "to": "enabling-services", "sourceAnchor": "bottom", "targetAnchor": "bottom", "routing": "orthogonal", "color": "purple", "showArrow": true },
+    { "from": "innovation-services", "to": "te-services-main", "sourceAnchor": "bottom", "targetAnchor": "bottom", "routing": "orthogonal", "color": "purple", "showArrow": true }
   ]
 }

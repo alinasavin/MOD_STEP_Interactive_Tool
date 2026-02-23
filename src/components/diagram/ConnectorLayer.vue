@@ -31,9 +31,12 @@ const getNodeHeightOriginal = (node?: Node) => {
   return hasSteps ? STEP_NODE_HEIGHT : BASE_NODE_HEIGHT;
 };
 
-const clamp = (val: number, min: number, max: number) => Math.min(Math.max(val, min), max);
+const clamp = (val: number, min: number, max: number) => {
+  if (min > max) return (min + max) / 2;
+  return Math.min(Math.max(val, min), max);
+};
 
-const getAnchorPoint = (nodeId: string, anchor: 'top' | 'bottom' | 'left' | 'right' | undefined, otherPos: { x: number, y: number }) => {
+const getAnchorPoint = (nodeId: string, anchor: 'top' | 'bottom' | 'left' | 'right' | undefined, otherPos: { x: number, y: number }, offset: number = 0) => {
   const node = findNode(nodeId);
   const pos = getPos(nodeId);
   if (!node || !pos) return { x: 0, y: 0 };
@@ -41,6 +44,7 @@ const getAnchorPoint = (nodeId: string, anchor: 'top' | 'bottom' | 'left' | 'rig
   const w = node.width || DEFAULT_NODE_WIDTH;
   const h = node.variant === 'text' ? 40 : getNodeVisualHeight(node);
   const r = node.variant === 'text' ? 0 : 32; // corner radius
+  const outset = 0;
 
   if (!anchor) {
     const dx = otherPos.x - pos.x;
@@ -54,14 +58,26 @@ const getAnchorPoint = (nodeId: string, anchor: 'top' | 'bottom' | 'left' | 'rig
 
   switch (anchor) {
     case 'top':
-      return { x: clamp(otherPos.x, pos.x - w / 2 + r, pos.x + w / 2 - r), y: pos.y - h / 2 };
-    case 'bottom':
-      return { x: clamp(otherPos.x, pos.x - w / 2 + r, pos.x + w / 2 - r), y: pos.y + h / 2 };
+    case 'bottom': {
+      const innerW = w / 2 - r;
+      // Use otherPos.x as base if it falls within our range, otherwise use our own center
+      const baseX = (otherPos.x >= pos.x - innerW && otherPos.x <= pos.x + innerW) ? otherPos.x : pos.x;
+      return {
+        x: clamp(baseX + offset, pos.x - innerW, pos.x + innerW),
+        y: anchor === 'top' ? pos.y - h / 2 - outset : pos.y + h / 2 + outset
+      };
+    }
     case 'left':
-      return { x: pos.x - w / 2, y: clamp(otherPos.y, pos.y - h / 2 + r, pos.y + h / 2 - r) };
-    case 'right':
-      return { x: pos.x + w / 2, y: clamp(otherPos.y, pos.y - h / 2 + r, pos.y + h / 2 - r) };
+    case 'right': {
+      const innerH = h / 2 - r;
+      const baseY = (otherPos.y >= pos.y - innerH && otherPos.y <= pos.y + innerH) ? otherPos.y : pos.y;
+      return {
+        x: anchor === 'left' ? pos.x - w / 2 - outset : pos.x + w / 2 + outset,
+        y: clamp(baseY + offset, pos.y - innerH, pos.y + innerH)
+      };
+    }
   }
+  return { x: pos.x, y: pos.y };
 };
 
 const getPath = (edge: Edge) => {
@@ -69,25 +85,78 @@ const getPath = (edge: Edge) => {
   const toPos = getPos(edge.to);
   if (!fromPos || !toPos) return '';
 
+
   const fromNode = findNode(edge.from);
   const toNode = findNode(edge.to);
 
+  // Detect parallel/bidirectional edges for offsetting
+  const allRelated = props.edges.filter(e =>
+      (e.from === edge.from && e.to === edge.to) ||
+      (e.from === edge.to && e.to === edge.from)
+  );
+  const edgeIndex = allRelated.indexOf(edge);
+  const totalRelated = allRelated.length;
+  // Offset of 24px between parallel lines
+  const offset = totalRelated > 1 ? (edgeIndex - (totalRelated - 1) / 2) * 24 : 0;
+
+  // Handle same position (Zero-length connector or self-loop)
+  // Use a small epsilon to handle potential floating point differences
+  const isSamePos = Math.abs(fromPos.x - toPos.x) < 0.1 && Math.abs(fromPos.y - toPos.y) < 0.1;
+
+  if (isSamePos) {
+    // Force distinct anchors if nodes share position to ensure a loop is visible
+    const sAnchor = edge.sourceAnchor || 'top';
+    // If target anchor is same as source, default to right to ensure it arcs
+    const tAnchor = edge.targetAnchor || (sAnchor === 'top' ? 'right' : 'top');
+
+    // Mock "otherPos" to get correct anchor points on the edges
+    const start = getAnchorPoint(edge.from, sAnchor, {
+      x: fromPos.x + (sAnchor === 'left' ? -100 : sAnchor === 'right' ? 100 : 0),
+      y: fromPos.y + (sAnchor === 'top' ? -100 : sAnchor === 'bottom' ? 100 : 0)
+    }, offset);
+    const end = getAnchorPoint(edge.to, tAnchor, {
+      x: fromPos.x + (tAnchor === 'left' ? -100 : tAnchor === 'right' ? 100 : 0),
+      y: fromPos.y + (tAnchor === 'top' ? -100 : tAnchor === 'bottom' ? 100 : 0)
+    }, -offset);
+
+    // Control point for a nice arc that goes outward
+    const cpX = (sAnchor === 'right' || tAnchor === 'right') ? Math.max(start.x, end.x) + 120 :
+               (sAnchor === 'left' || tAnchor === 'left') ? Math.min(start.x, end.x) - 120 : (start.x + end.x) / 2 + 60;
+    const cpY = (sAnchor === 'top' || tAnchor === 'top') ? Math.min(start.y, end.y) - 120 :
+               (sAnchor === 'bottom' || tAnchor === 'bottom') ? Math.max(start.y, end.y) + 120 : (start.y + end.y) / 2 - 60;
+
+    return `M ${start.x} ${start.y} Q ${cpX} ${cpY} ${end.x} ${end.y}`;
+  }
+
   // Use new precision logic if routing or anchors are specified
   if (edge.routing || edge.sourceAnchor || edge.targetAnchor) {
-    const start = getAnchorPoint(edge.from, edge.sourceAnchor, toPos);
-    const end = getAnchorPoint(edge.to, edge.targetAnchor, fromPos);
+    const start = getAnchorPoint(edge.from, edge.sourceAnchor, toPos, offset);
+    const end = getAnchorPoint(edge.to, edge.targetAnchor, fromPos, offset);
 
     if (edge.routing === 'straight') {
-      return `M ${start.x} ${start.y} L ${end.x} ${end.y}`;
+      const dx = end.x - start.x;
+      const dy = end.y - start.y;
+      // Add a tiny offset to ensure the path has a direction for the marker
+      // Using 0.001 as a more subtle fudge that still triggers orientation
+      const fudge = 0.001;
+      return `M ${start.x} ${start.y} L ${end.x + (dx === 0 ? fudge : 0)} ${end.y + (dy === 0 ? fudge : 0)}`;
     }
 
     if (edge.routing === 'orthogonal') {
-      // Create a Z-shape or L-shape
       const dx = end.x - start.x;
       const dy = end.y - start.y;
 
+      // Special routing for Innovation Services to go below the main diagram row
+      if (edge.from === 'innovation-services') {
+          const belowY = Math.max(start.y, end.y) + 80;
+          if (edge.targetAnchor === 'right' || edge.targetAnchor === 'left') {
+              const shoulderX = edge.targetAnchor === 'right' ? end.x + 40 : end.x - 40;
+              return `M ${start.x} ${start.y} L ${start.x} ${belowY} L ${shoulderX} ${belowY} L ${shoulderX} ${end.y} L ${end.x} ${end.y}`;
+          }
+          return `M ${start.x} ${start.y} L ${start.x} ${belowY} L ${end.x} ${belowY} L ${end.x} ${end.y}`;
+      }
+
       if (edge.sourceAnchor === 'bottom' && edge.targetAnchor === 'right') {
-         // Special case for Innovation -> Enabling/TE
          return `M ${start.x} ${start.y} L ${start.x} ${end.y} L ${end.x} ${end.y}`;
       }
 
@@ -96,9 +165,36 @@ const getPath = (edge: Edge) => {
     }
 
     // Default to Bezier but with precision anchors
-    const hTension = Math.min(100, Math.abs(end.x - start.x) * 0.5);
     const dx = end.x - start.x;
-    return `M ${start.x} ${start.y} C ${start.x + hTension * Math.sign(dx)} ${start.y}, ${end.x - hTension * Math.sign(dx)} ${end.y}, ${end.x} ${end.y}`;
+    const dy = end.y - start.y;
+
+    const getTension = (sA: string | undefined, tA: string | undefined, dist: number) => {
+       if (sA === tA) return 150; // Loop out more if same side
+       return Math.max(80, Math.abs(dist) * 0.5);
+    };
+
+    let cp1x = start.x;
+    let cp1y = start.y;
+    let cp2x = end.x;
+    let cp2y = end.y;
+
+    if (edge.sourceAnchor === 'top' || edge.sourceAnchor === 'bottom') {
+       const t = getTension(edge.sourceAnchor, edge.targetAnchor, dy);
+       cp1y += (edge.sourceAnchor === 'top' ? -t : t);
+    } else {
+       const t = getTension(edge.sourceAnchor, edge.targetAnchor, dx);
+       cp1x += (edge.sourceAnchor === 'left' ? -t : t);
+    }
+
+    if (edge.targetAnchor === 'top' || edge.targetAnchor === 'bottom') {
+       const t = getTension(edge.sourceAnchor, edge.targetAnchor, dy);
+       cp2y += (edge.targetAnchor === 'top' ? -t : t);
+    } else {
+       const t = getTension(edge.sourceAnchor, edge.targetAnchor, dx);
+       cp2x += (edge.targetAnchor === 'left' ? -t : t);
+    }
+
+    return `M ${start.x} ${start.y} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${end.x} ${end.y}`;
   }
 
   // ORIGINAL LOGIC for backward compatibility
@@ -173,7 +269,7 @@ const getDashArray = (edge: Edge) => {
 
 <template>
   <svg
-      class="absolute inset-0 w-full h-full pointer-events-none z-10"
+      class="absolute inset-0 w-full h-full pointer-events-none z-20"
       xmlns="http://www.w3.org/2000/svg"
       :viewBox="`0 0 ${dimensions.width} ${dimensions.height}`"
   >
@@ -188,11 +284,13 @@ const getDashArray = (edge: Edge) => {
           viewBox="0 0 10 10"
           refX="10"
           refY="5"
-          markerWidth="4"
-          markerHeight="4"
-          orient="auto-start-reverse"
+          markerWidth="8"
+          markerHeight="8"
+          orient="auto"
+          overflow="visible"
       >
-        <path d="M 0 0 L 10 5 L 0 10 z" fill="context-stroke" />
+        <!-- Ensure fill is context-stroke but also add a small stroke to prevent anti-aliasing gaps -->
+        <path d="M 0 0 L 10 5 L 0 10 z" fill="context-stroke" stroke="context-stroke" stroke-width="0.5" />
       </marker>
     </defs>
 
@@ -205,7 +303,7 @@ const getDashArray = (edge: Edge) => {
         fill="none"
         :stroke-dasharray="getDashArray(edge)"
         stroke-linecap="round"
-        :marker-end="edge.showArrow ? 'url(#arrowhead)' : ''"
+        :marker-end="edge.showArrow !== false ? 'url(#arrowhead)' : ''"
         class="transition-all duration-700 ease-in-out"
         :opacity="isActive(edge) ? 1.0 : 0.2"
         :filter="isActive(edge) ? 'url(#glow)' : ''"

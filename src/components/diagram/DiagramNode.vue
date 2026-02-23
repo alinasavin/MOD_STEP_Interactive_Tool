@@ -44,21 +44,22 @@ const handleInteraction = (isStarting: boolean) => {
         left: `${x}px`,
         top: `${y}px`,
         width: node.width ? `${node.width}px` : '16rem',
+        minHeight: node.manualHeight ? `${node.manualHeight}px` : 'auto',
         '--node-accent': `var(--color-bright-${accentColor})`,
         /* Bumps the node above everything when it or its children are focused/hovered */
-        zIndex: hoveredId ? 100 : 20
+        zIndex: hoveredId ? 100 : 10
       }"
       :class="[isActive ? 'opacity-100 scale-100' : 'opacity-0 scale-90 pointer-events-none']"
   >
     <template v-if="node.variant === 'text'">
       <div class="text-left py-2 px-4">
         <div v-if="node.label" class="text-[11px] font-black uppercase tracking-[0.2em] mb-1" :style="{ color: 'var(--node-accent)' }">{{ node.label }}</div>
-        <p v-if="node.description" class="text-[11px] font-black uppercase tracking-[0.2em] text-zinc-900 dark:text-zinc-100 leading-tight mb-0">{{ node.description }}</p>
+        <p v-if="node.description" class="text-[11px] font-black uppercase tracking-[0.2em] leading-tight mb-0" :style="{ color: 'var(--node-accent)' }">{{ node.description }}</p>
       </div>
     </template>
     <div
         v-else
-        class="w-full p-5 bg-zinc-950/90 backdrop-blur-md border-2 rounded-4xl text-left relative transition-all duration-500 shadow-2xl"
+        class="w-full h-full p-5 bg-zinc-950/90 backdrop-blur-md border-2 rounded-4xl text-left relative transition-all duration-500 shadow-2xl"
         :style="{
           borderColor: isActive ? 'var(--accent-color)' : '',
           color: isActive ? 'var(--accent-color)' : '',
