@@ -133,7 +133,8 @@ const getPath = (edge: Edge) => {
       const dx = end.x - start.x;
       const dy = end.y - start.y;
       // Add a tiny offset to ensure the path has a direction for the marker
-      const fudge = 0.01;
+      // Using 0.001 as a more subtle fudge that still triggers orientation
+      const fudge = 0.001;
       return `M ${start.x} ${start.y} L ${end.x + (dx === 0 ? fudge : 0)} ${end.y + (dy === 0 ? fudge : 0)}`;
     }
 
@@ -284,7 +285,8 @@ const getDashArray = (edge: Edge) => {
           orient="auto"
           overflow="visible"
       >
-        <path d="M 0 0 L 10 5 L 0 10 z" fill="context-stroke" />
+        <!-- Ensure fill is context-stroke but also add a small stroke to prevent anti-aliasing gaps -->
+        <path d="M 0 0 L 10 5 L 0 10 z" fill="context-stroke" stroke="context-stroke" stroke-width="0.5" />
       </marker>
     </defs>
 

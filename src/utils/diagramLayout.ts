@@ -24,8 +24,8 @@ export const getNodeVisualHeight = (node: DiagramNode): number => {
 
   // Base height needs to be generous to ensure arrows don't clip into the border
   const hasSteps = (node.steps?.length || 0) > 0 || (node.parallelSteps?.length || 0) > 0;
-  // Increase baseHeight for box nodes to ensure content fits
-  const baseHeight = hasSteps ? 160 : 120;
+  // Reduce baseHeight to bring connectors closer to the borders
+  const baseHeight = hasSteps ? 130 : 90;
 
   return baseHeight + Math.max(mainH, parallelH);
 };

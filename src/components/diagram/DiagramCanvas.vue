@@ -97,12 +97,12 @@ const diagramLayout = computed(() => {
 const scaleFactor = computed(() => {
   if (containerWidth.value === 0) return 1;
   const contentW = diagramLayout.value.width;
-  const availableW = containerWidth.value - 60; // Internal padding safety
+  const availableW = containerWidth.value - 40; // Internal padding safety
 
   if (contentW <= availableW) return 1;
 
-  // Cap at 0.75 to keep text legible as requested
-  return Math.max(0.75, Math.min(1, availableW / contentW));
+  // Allow scaling down to 0.4 to ensure it fits on mobile as requested
+  return Math.max(0.4, Math.min(1, availableW / contentW));
 });
 
 const scrollToCenter = () => {
