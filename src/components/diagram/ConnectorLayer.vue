@@ -44,7 +44,7 @@ const getAnchorPoint = (nodeId: string, anchor: 'top' | 'bottom' | 'left' | 'rig
   const w = node.width || (node.variant === 'text' ? 320 : DEFAULT_NODE_WIDTH);
   const h = node.variant === 'text' ? 40 : getNodeVisualHeight(node);
   const r = node.variant === 'text' ? 0 : 32; // corner radius
-  const outset = 8; // Further increased for arrow visibility
+  const outset = 0; // Exactly at the border as requested
 
   if (!anchor) {
     const dx = otherPos.x - pos.x;
@@ -56,19 +56,28 @@ const getAnchorPoint = (nodeId: string, anchor: 'top' | 'bottom' | 'left' | 'rig
     }
   }
 
-  // Use a base X/Y for the anchor to ensure parallelism when offset is applied
-  // If the nodes are mostly aligned, we use the center. If not, we still use center+offset
-  // but clamp it to the node's edge.
   switch (anchor) {
     case 'top':
-      return { x: clamp(pos.x + offset, pos.x - w / 2 + r, pos.x + w / 2 - r), y: pos.y - h / 2 - outset };
-    case 'bottom':
-      return { x: clamp(pos.x + offset, pos.x - w / 2 + r, pos.x + w / 2 - r), y: pos.y + h / 2 + outset };
+    case 'bottom': {
+      const innerW = w / 2 - r;
+      // Use otherPos.x as base if it falls within our range, otherwise use our own center
+      const baseX = (otherPos.x >= pos.x - innerW && otherPos.x <= pos.x + innerW) ? otherPos.x : pos.x;
+      return {
+        x: clamp(baseX + offset, pos.x - innerW, pos.x + innerW),
+        y: anchor === 'top' ? pos.y - h / 2 - outset : pos.y + h / 2 + outset
+      };
+    }
     case 'left':
-      return { x: pos.x - w / 2 - outset, y: clamp(pos.y + offset, pos.y - h / 2 + r, pos.y + h / 2 - r) };
-    case 'right':
-      return { x: pos.x + w / 2 + outset, y: clamp(pos.y + offset, pos.y - h / 2 + r, pos.y + h / 2 - r) };
+    case 'right': {
+      const innerH = h / 2 - r;
+      const baseY = (otherPos.y >= pos.y - innerH && otherPos.y <= pos.y + innerH) ? otherPos.y : pos.y;
+      return {
+        x: anchor === 'left' ? pos.x - w / 2 - outset : pos.x + w / 2 + outset,
+        y: clamp(baseY + offset, pos.y - innerH, pos.y + innerH)
+      };
+    }
   }
+  return { x: pos.x, y: pos.y };
 };
 
 const getPath = (edge: Edge) => {
@@ -121,20 +130,25 @@ const getPath = (edge: Edge) => {
     const end = getAnchorPoint(edge.to, edge.targetAnchor, fromPos, offset);
 
     if (edge.routing === 'straight') {
-      // Add a minute offset to perfectly horizontal/vertical lines to prevent clipping bugs at certain scales
-      const isHorizontal = Math.abs(start.y - end.y) < 0.1;
-      const isVertical = Math.abs(start.x - end.x) < 0.1;
-      const fudge = 0.01;
-      return `M ${start.x} ${start.y} L ${end.x + (isHorizontal ? 0 : 0)} ${end.y + (isHorizontal ? fudge : 0)}`;
+      const fudge = (start.x === end.x || start.y === end.y) ? 0.01 : 0;
+      return `M ${start.x} ${start.y} L ${end.x + fudge} ${end.y + fudge}`;
     }
 
     if (edge.routing === 'orthogonal') {
-      // Create a Z-shape or L-shape
       const dx = end.x - start.x;
       const dy = end.y - start.y;
 
+      // Special routing for Innovation Services to go below the main diagram row
+      if (edge.from === 'innovation-services') {
+          const belowY = Math.max(start.y, end.y) + 80;
+          if (edge.targetAnchor === 'right' || edge.targetAnchor === 'left') {
+              const shoulderX = edge.targetAnchor === 'right' ? end.x + 40 : end.x - 40;
+              return `M ${start.x} ${start.y} L ${start.x} ${belowY} L ${shoulderX} ${belowY} L ${shoulderX} ${end.y} L ${end.x} ${end.y}`;
+          }
+          return `M ${start.x} ${start.y} L ${start.x} ${belowY} L ${end.x} ${belowY} L ${end.x} ${end.y}`;
+      }
+
       if (edge.sourceAnchor === 'bottom' && edge.targetAnchor === 'right') {
-         // Special case for Innovation -> Enabling/TE
          return `M ${start.x} ${start.y} L ${start.x} ${end.y} L ${end.x} ${end.y}`;
       }
 
@@ -262,9 +276,9 @@ const getDashArray = (edge: Edge) => {
           viewBox="0 0 10 10"
           refX="10"
           refY="5"
-          markerWidth="4"
-          markerHeight="4"
-          orient="auto-start-reverse"
+          markerWidth="8"
+          markerHeight="8"
+          orient="auto"
       >
         <path d="M 0 0 L 10 5 L 0 10 z" fill="context-stroke" />
       </marker>
