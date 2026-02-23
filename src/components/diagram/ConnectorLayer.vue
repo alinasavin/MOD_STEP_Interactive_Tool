@@ -130,8 +130,7 @@ const getPath = (edge: Edge) => {
     const end = getAnchorPoint(edge.to, edge.targetAnchor, fromPos, offset);
 
     if (edge.routing === 'straight') {
-      const fudge = (start.x === end.x || start.y === end.y) ? 0.01 : 0;
-      return `M ${start.x} ${start.y} L ${end.x + fudge} ${end.y + fudge}`;
+      return `M ${start.x} ${start.y} L ${end.x} ${end.y}`;
     }
 
     if (edge.routing === 'orthogonal') {
@@ -279,6 +278,7 @@ const getDashArray = (edge: Edge) => {
           markerWidth="8"
           markerHeight="8"
           orient="auto"
+          overflow="visible"
       >
         <path d="M 0 0 L 10 5 L 0 10 z" fill="context-stroke" />
       </marker>

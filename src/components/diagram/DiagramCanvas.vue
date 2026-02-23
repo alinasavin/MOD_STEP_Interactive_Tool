@@ -75,7 +75,7 @@ const diagramLayout = computed(() => {
   return {
     positions,
     width: (maxX - minX) + 256 + (pX * 2),
-    height: (maxY - minY) + 100 + (pY * 2)
+    height: (maxY - minY) + 100 + (pY * 2) + 150
   };
 });
 
