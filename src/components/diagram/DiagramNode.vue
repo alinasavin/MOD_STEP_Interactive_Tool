@@ -47,7 +47,7 @@ const handleInteraction = (isStarting: boolean) => {
         minHeight: node.manualHeight ? `${node.manualHeight}px` : 'auto',
         '--node-accent': `var(--color-bright-${accentColor})`,
         /* Bumps the node above everything when it or its children are focused/hovered */
-        zIndex: hoveredId ? 100 : 20
+        zIndex: hoveredId ? 100 : 10
       }"
       :class="[isActive ? 'opacity-100 scale-100' : 'opacity-0 scale-90 pointer-events-none']"
   >

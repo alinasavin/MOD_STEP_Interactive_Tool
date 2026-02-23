@@ -41,10 +41,10 @@ const getAnchorPoint = (nodeId: string, anchor: 'top' | 'bottom' | 'left' | 'rig
   const pos = getPos(nodeId);
   if (!node || !pos) return { x: 0, y: 0 };
 
-  const w = node.width || (node.variant === 'text' ? 320 : DEFAULT_NODE_WIDTH);
+  const w = node.width || DEFAULT_NODE_WIDTH;
   const h = node.variant === 'text' ? 40 : getNodeVisualHeight(node);
   const r = node.variant === 'text' ? 0 : 32; // corner radius
-  const outset = 0; // Exactly at the border as requested
+  const outset = 0;
 
   if (!anchor) {
     const dx = otherPos.x - pos.x;
@@ -100,12 +100,16 @@ const getPath = (edge: Edge) => {
   const offset = totalRelated > 1 ? (edgeIndex - (totalRelated - 1) / 2) * 24 : 0;
 
   // Handle same position (Zero-length connector or self-loop)
-  if (fromPos.x === toPos.x && fromPos.y === toPos.y) {
-    // Force distinct anchors if nodes share position
-    const sAnchor = edge.sourceAnchor || 'top';
-    const tAnchor = edge.targetAnchor || 'right';
+  // Use a small epsilon to handle potential floating point differences
+  const isSamePos = Math.abs(fromPos.x - toPos.x) < 0.1 && Math.abs(fromPos.y - toPos.y) < 0.1;
 
-    // Mock "otherPos" to get correct anchor points on the same node
+  if (isSamePos) {
+    // Force distinct anchors if nodes share position to ensure a loop is visible
+    const sAnchor = edge.sourceAnchor || 'top';
+    // If target anchor is same as source, default to right to ensure it arcs
+    const tAnchor = edge.targetAnchor || (sAnchor === 'top' ? 'right' : 'top');
+
+    // Mock "otherPos" to get correct anchor points on the edges
     const start = getAnchorPoint(edge.from, sAnchor, {
       x: fromPos.x + (sAnchor === 'left' ? -100 : sAnchor === 'right' ? 100 : 0),
       y: fromPos.y + (sAnchor === 'top' ? -100 : sAnchor === 'bottom' ? 100 : 0)
@@ -113,13 +117,13 @@ const getPath = (edge: Edge) => {
     const end = getAnchorPoint(edge.to, tAnchor, {
       x: fromPos.x + (tAnchor === 'left' ? -100 : tAnchor === 'right' ? 100 : 0),
       y: fromPos.y + (tAnchor === 'top' ? -100 : tAnchor === 'bottom' ? 100 : 0)
-    }, -offset); // Opposite offset for target to widen the loop if multiple exist
+    }, -offset);
 
     // Control point for a nice arc that goes outward
-    const cpX = (sAnchor === 'right' || tAnchor === 'right') ? Math.max(start.x, end.x) + 80 :
-               (sAnchor === 'left' || tAnchor === 'left') ? Math.min(start.x, end.x) - 80 : (start.x + end.x) / 2 + 40;
-    const cpY = (sAnchor === 'top' || tAnchor === 'top') ? Math.min(start.y, end.y) - 80 :
-               (sAnchor === 'bottom' || tAnchor === 'bottom') ? Math.max(start.y, end.y) + 80 : (start.y + end.y) / 2 - 40;
+    const cpX = (sAnchor === 'right' || tAnchor === 'right') ? Math.max(start.x, end.x) + 120 :
+               (sAnchor === 'left' || tAnchor === 'left') ? Math.min(start.x, end.x) - 120 : (start.x + end.x) / 2 + 60;
+    const cpY = (sAnchor === 'top' || tAnchor === 'top') ? Math.min(start.y, end.y) - 120 :
+               (sAnchor === 'bottom' || tAnchor === 'bottom') ? Math.max(start.y, end.y) + 120 : (start.y + end.y) / 2 - 60;
 
     return `M ${start.x} ${start.y} Q ${cpX} ${cpY} ${end.x} ${end.y}`;
   }
@@ -265,7 +269,7 @@ const getDashArray = (edge: Edge) => {
 
 <template>
   <svg
-      class="absolute inset-0 w-full h-full pointer-events-none z-30"
+      class="absolute inset-0 w-full h-full pointer-events-none z-20"
       xmlns="http://www.w3.org/2000/svg"
       :viewBox="`0 0 ${dimensions.width} ${dimensions.height}`"
   >
